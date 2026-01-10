@@ -38,26 +38,17 @@ while True: #gameloop
             exit()
 
  
-    """ keys = pygame.key.get_pressed()
+        keys = pygame.key.get_pressed()
         if keys [pygame.K_UP] or keys [pygame.K_z]:
-        player.y -= 5
+            player.y -= 5
         if keys [pygame.K_DOWN] or keys [pygame.K_s]:
-        player.y += 5
-        if keys [pygame.K_LEFT] or keys [pygame.K_q]:
-        player.x -= 5
-        if keys [pygame.K_RIGHT] or keys [pygame.K_d]:
-        player.x += 5 """
-
-    
-    keys = pygame.key.get_pressed() #access the keys currently pressed
-    if keys[pygame.K_UP] or keys[pygame.K_w]:
-             player.y -= 5
-        if keys[pygame.K_DOWN] or keys[pygame.K_s]:
             player.y += 5
-        if keys[pygame.K_LEFT] or keys[pygame.K_a]:
-             player.x -= 5
-        if keys[pygame.K_RIGHT] or keys[pygame.K_d]:
-            player.x += 5
+        if keys [pygame.K_LEFT] or keys [pygame.K_q]:
+            player.x -= 5
+        if keys [pygame.K_RIGHT] or keys [pygame.K_d]:
+            player.x += 5 
+
+   
         
 
 
