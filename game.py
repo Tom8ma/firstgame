@@ -6,12 +6,18 @@ import os
 #gamevariables
 GAME_WIDTH = 512
 GAME_HEIGHT = 512
+    
+    
+PLAYER_X = GAME_WIDTH/2
+PLAYER_Y = GAME_HEIGHT/2
+PLAYER_WIDTH = 150
+PLAYER_HIGHT = 120
 
 
 #afbeeldingen
-backround_image = pygame.image.load(os.path.join("images" , "background.png")) 
-#player_image_right = pygame.image.load(os.path.join("images" , "megaman-right.png"))
-
+backround_image = pygame.image.load(os.path.join("dino" , "BACK.jpg")) 
+player_image_right =pygame.image.load(os.path.join("dino" , "dino.png"))
+player_image_right = pygame.transform.scale(player_image_right , (PLAYER_HIGHT , PLAYER_HIGHT))
 
 
 
@@ -19,15 +25,23 @@ backround_image = pygame.image.load(os.path.join("images" , "background.png"))
 pygame.init()
 window = pygame.display.set_mode((GAME_WIDTH , GAME_HEIGHT))
 pygame.display.set_caption("game")
+#pygame.display.set.icon
 clock =  pygame.time.Clock()
 
-player = pygame.Rect(250 , 150 , 50 , 50)
+
+class Player(pygame.Rect):
+    def __init__(self):
+        pygame.Rect.__init__(self , PLAYER_WIDTH , PLAYER_HIGHT , PLAYER_X , PLAYER_Y)
+        self.image = player_image_right
+
+
+player = Player()
 
 
 def draw():
-    window.fill("BLUE")
-    window.blit(backround_image, (0, 150) )
-    pygame.draw.rect(window, (2 , 239 , 238), player)
+    window.fill("WHITE")
+    window.blit(backround_image, (0, 100) )
+    window.blit(player.image , player)
 
 
 
