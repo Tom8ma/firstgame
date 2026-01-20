@@ -1,43 +1,67 @@
 import pygame
-from sys import exit #terminate the program
+from sys import exit
 import os
 
-
-#gamevariables
+#game variables
 GAME_WIDTH = 512
 GAME_HEIGHT = 512
-    
-    
+
 PLAYER_X = GAME_WIDTH/2
 PLAYER_Y = GAME_HEIGHT/2
 PLAYER_WIDTH = 42
-PLAYER_HIGHT = 48
-PLAYER_DISTANCE = 5 
+PLAYER_HEIGHT = 48
+PLAYER_JUMP_WIDTH = 52
+PLAYER_JUMP_HEIGHT = 60
+PLAYER_DISTANCE = 5
 
 GRAVITY = 0.5
 PLAYER_VELOCITY_Y = -10
+FLOOR_Y = GAME_HEIGHT * 3/4
 
-#afbeeldingen
-backround_image = pygame.image.load(os.path.join("images" , "background.png")) 
-player_image_right =pygame.image.load(os.path.join("images" , "megaman-right.png"))
-player_image_right = pygame.transform.scale(player_image_right , (PLAYER_HIGHT , PLAYER_HIGHT))
+#images
+def load_image(image_name, scale=None):
+    image = pygame.image.load(os.path.join("images", image_name))
+    if scale is not None:
+        image = pygame.transform.scale(image, scale)
+    return image
 
-
-
+background_image = load_image("background.png")
+player_image_right = load_image("megaman-right.png", (PLAYER_WIDTH, PLAYER_HEIGHT))
+player_image_left = load_image("megaman-left.png", (PLAYER_WIDTH, PLAYER_HEIGHT))
+player_image_jump_right = load_image("megaman-right-jump.png", (PLAYER_JUMP_WIDTH, PLAYER_JUMP_HEIGHT))
+player_image_jump_left = load_image("megaman-left-jump.png", (PLAYER_JUMP_WIDTH, PLAYER_JUMP_HEIGHT))
 
 pygame.init()
-window = pygame.display.set_mode((GAME_WIDTH , GAME_HEIGHT))
+window = pygame.display.set_mode((GAME_WIDTH, GAME_HEIGHT))
 pygame.display.set_caption("game")
 pygame.display.set_icon(player_image_right)
-clock =  pygame.time.Clock()
-
+clock = pygame.time.Clock()
 
 class Player(pygame.Rect):
     def __init__(self):
-        pygame.Rect.__init__(self , PLAYER_X , PLAYER_Y , PLAYER_WIDTH , PLAYER_HIGHT)
+        pygame.Rect.__init__(self, PLAYER_X, PLAYER_Y, PLAYER_WIDTH, PLAYER_HEIGHT)
         self.image = player_image_right
         self.velocity_y = 0
-
+        self.direction = "right"
+        self.jumping = False
+    
+    
+    #afbeedling links rechts
+    def update_image(self):
+        if self.jumping:
+            self.width = PLAYER_JUMP_WIDTH
+            self.height = PLAYER_JUMP_HEIGHT
+            if self.direction == "right":
+                self.image = player_image_jump_right
+            elif self.direction == "left":
+                self.image = player_image_jump_left
+        else:
+            self.width = PLAYER_WIDTH
+            self.height = PLAYER_HEIGHT
+            if self.direction == "right":
+                self.image = player_image_right
+            elif self.direction == "left":
+                self.image = player_image_left
 
 player = Player()
 
@@ -45,41 +69,36 @@ def move():
     player.velocity_y += GRAVITY
     player.y += player.velocity_y
 
+    if player.y + player.height > FLOOR_Y:
+        player.y = FLOOR_Y - player.height
+        player.jumping = False
+
 def draw():
-    window.fill("LIGHTBLUE")
-    window.blit(backround_image, (0, 80) )
-    window.blit(player.image , player)
+    window.fill("BLUE")
+    window.blit(background_image, (0, 80))
+    player.update_image()
+    window.blit(player.image, player)
 
-
-
-while True: #gameloop
-   for event in pygame.event.get():
+while True: #game loop
+    for event in pygame.event.get():
         if event.type == pygame.QUIT:
             pygame.quit()
             exit()
 
- 
-        keys = pygame.key.get_pressed()
-        if keys[pygame.K_UP] or keys[pygame.K_z]:
-            player.velocity_y = PLAYER_VELOCITY_Y
-            
-                
-                
-       # if keys [pygame.K_DOWN] or keys [pygame.K_s]:
-       #     player.y = min(player.y + PLAYER_DISTANCE , GAME_HEIGHT - player.height)
-                
-                
-        if keys[pygame.K_LEFT] or keys[pygame.K_q]:
-            player.x = max(player.x - PLAYER_DISTANCE, 0)
-            
-            
-        if keys[pygame.K_RIGHT] or keys[pygame.K_d]:
-            player.x = min(player.x + PLAYER_DISTANCE , GAME_WIDTH - player.width)
+    keys = pygame.key.get_pressed()
+    if (keys[pygame.K_UP] or keys[pygame.K_z]) and not player.jumping:
+        player.velocity_y = PLAYER_VELOCITY_Y
+        player.jumping = True
 
-   
-        
+    if keys[pygame.K_LEFT] or keys[pygame.K_q]:
+        player.x = max(player.x - PLAYER_DISTANCE, 0)
+        player.direction = "left"
 
-        move()
-        draw()
-        pygame.display.update()
-        clock.tick(60) #60 FPS
+    if keys[pygame.K_RIGHT] or keys[pygame.K_d]:
+        player.x = min(player.x + PLAYER_DISTANCE, GAME_WIDTH - player.width)
+        player.direction = "right"
+
+    move()
+    draw()
+    pygame.display.update()
+    clock.tick(60) #60 frames per second (fps)
