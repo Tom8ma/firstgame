@@ -9,11 +9,11 @@ GAME_HEIGHT = 512
 
 PLAYER_X = GAME_WIDTH/2
 PLAYER_Y = GAME_HEIGHT/2
-PLAYER_WIDTH = 42
-PLAYER_HEIGHT = 48
-PLAYER_JUMP_WIDTH = 52
-PLAYER_JUMP_HEIGHT = 60
-PLAYER_DISTANCE = 5
+PLAYER_WIDTH = 63       
+PLAYER_HEIGHT = 63
+PLAYER_JUMP_WIDTH = 52   #75
+PLAYER_JUMP_HEIGHT = 60      #55
+PLAYER_DISTANCE = 10
 
 GRAVITY = 0.5
 FRICTION = 0.4
@@ -29,10 +29,10 @@ def load_image(image_name, scale=None):
     return image
 
 background_image = load_image("background.png")
-player_image_right = load_image("megaman-right.png", (PLAYER_WIDTH, PLAYER_HEIGHT))
-player_image_left = load_image("megaman-left.png", (PLAYER_WIDTH, PLAYER_HEIGHT))
-player_image_jump_right = load_image("megaman-right-jump.png", (PLAYER_JUMP_WIDTH, PLAYER_JUMP_HEIGHT))
-player_image_jump_left = load_image("megaman-left-jump.png", (PLAYER_JUMP_WIDTH, PLAYER_JUMP_HEIGHT))
+player_image_right = load_image("DinoR.png", (PLAYER_WIDTH, PLAYER_HEIGHT))
+player_image_left = load_image("DinoL.png", (PLAYER_WIDTH, PLAYER_HEIGHT))
+player_image_jump_right = load_image("JumpR.png", (PLAYER_JUMP_WIDTH, PLAYER_JUMP_HEIGHT))
+player_image_jump_left = load_image("JumpL.png", (PLAYER_JUMP_WIDTH, PLAYER_JUMP_HEIGHT))
 floor_tile_image = load_image("floor-tile.png" , (TILE_SIZE, TILE_SIZE))
 
 
