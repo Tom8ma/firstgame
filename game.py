@@ -18,7 +18,7 @@ PLAYER_DISTANCE = 5
 GRAVITY = 0.5
 FRICTION = 0.4
 PLAYER_VELOCITY_X = 5
-PLAYER_VELOCITY_Y = -10
+PLAYER_VELOCITY_Y = -11
 
 
 #images
@@ -56,15 +56,13 @@ class Player(pygame.Rect):
     #afbeedling links rechts
     def update_image(self):
         if self.jumping:
-            self.width = PLAYER_JUMP_WIDTH
-            self.height = PLAYER_JUMP_HEIGHT
+ 
             if self.direction == "right":
                 self.image = player_image_jump_right
             elif self.direction == "left":
                 self.image = player_image_jump_left
         else:
-            self.width = PLAYER_WIDTH
-            self.height = PLAYER_HEIGHT
+ 
             if self.direction == "right":
                 self.image = player_image_right
             elif self.direction == "left":
@@ -97,6 +95,27 @@ def check_tile_collision():
             return tile
     return None
 
+def check_tile_collision_x():
+    tile = check_tile_collision()
+    if tile is not None:
+        if player.velocity_x < 0:
+            player.x = tile.x + tile.width
+        elif player.velocity_x > 0:
+            player.x = tile.x - player.width
+        player.velocity_x = 0
+        
+
+
+def check_tile_collision_y():
+    tile = check_tile_collision()
+    if tile is not None:
+        if player.velocity_y < 0:
+            player.y = tile.y + tile.height
+        elif player.velocity_y > 0:
+            player.y = tile.y - player.height
+            player.jumping = False
+        player.velocity_y = 0
+
 
 def move():
     if player.direction == "left" and player.velocity_x < 0:
@@ -111,9 +130,13 @@ def move():
         player.x = 0
     elif player.x + player.width > GAME_WIDTH:
         player.x = GAME_WIDTH - player.width
+        
+    check_tile_collision_x()
     
     player.velocity_y += GRAVITY
     player.y += player.velocity_y
+    
+    check_tile_collision_y()
 
 
 def draw():
