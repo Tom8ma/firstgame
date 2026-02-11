@@ -76,14 +76,16 @@ player_image_jump_shoot_left = load_image("megaman-left-jump-shoot.png",
 player_image_bullet = load_image("bullet.png", (PLAYER_BULLET_WIDTH, PLAYER_BULLET_HEIGHT))
 
 floor_tile_image = load_image("2.png", (TILE_SIZE, TILE_SIZE))
-wall_tile_image = load_image("wall-tile.png", (TILE_SIZE, TILE_SIZE))
+wall_tile_image = load_image("4.png", (TILE_SIZE, TILE_SIZE))
 beam_tile_image = load_image("beam-tile.png", (TILE_SIZE, TILE_SIZE))
 rock_tile1_image = load_image("1.png", (TILE_SIZE, TILE_SIZE))
 rock_tile2_image = load_image("2.png", (TILE_SIZE, TILE_SIZE))
 rock_tile3_image = load_image("3.png", (TILE_SIZE, TILE_SIZE))
-rock_tile4_image = load_image("4.png", (TILE_SIZE, TILE_SIZE))
+rock_tile4_image = load_image("5.png", (TILE_SIZE, TILE_SIZE))
 door_tile_image = load_image("door-tile.png", (TILE_SIZE, TILE_SIZE))
 room_tile_image = load_image("room-tile.png", (TILE_SIZE, TILE_SIZE))
+rock_tile6_image = load_image("6.png", (TILE_SIZE, TILE_SIZE))
+rock_tile7_image = load_image("8.png", (TILE_SIZE, TILE_SIZE))
 
 metall_image_right = load_image("metall-right.png", (METALL_WIDTH, METALL_HEIGHT))
 metall_image_left = load_image("metall-left.png", (METALL_WIDTH, METALL_HEIGHT))
@@ -279,8 +281,13 @@ def create_map():
             elif map_code == 11:
                 metalls.append(Metall(x, y))
             elif map_code == 12:
-                bladers.append(Blader(x, y))                
-
+                bladers.append(Blader(x, y))
+            elif map_code == 13:
+                tiles.append(Tile(x, y, rock_tile6_image))
+            elif map_code == 14:
+                tiles.append(Tile(x, y, rock_tile7_image))
+            
+            
 def check_tile_collision(character):
     for tile in tiles:
         if character.colliderect(tile):
@@ -451,8 +458,8 @@ def move():
     items = [item for item in items if not item.used]
 
 def draw():
-    window.fill((20, 18, 167))
-    window.blit(background_image, (0, 80))
+    window.fill((187 , 221 , 254))
+    window.blit(background_image, (0, 40))
 
     for tile in background_tiles:
         window.blit(tile.image, tile)
@@ -522,7 +529,7 @@ while True: #game loop
         move_player_x(-PLAYER_VELOCITY_X)
         player.direction = "right"
     
-    if keys[pygame.MOUSEBUTTONDOWN] or keys[pygame.MOUSEBUTTONUP]:
+    if keys[pygame.K_SPACE] or keys[pygame.K_f]:
         player.set_shooting()
 
     move()
