@@ -14,8 +14,8 @@ GAME_MAP = tile_map.GAME_MAP1
 
 PLAYER_X = GAME_WIDTH/2
 PLAYER_Y = GAME_HEIGHT/2
-PLAYER_WIDTH = 52
-PLAYER_HEIGHT = 60
+PLAYER_WIDTH = 55
+PLAYER_HEIGHT = 63
 PLAYER_JUMP_WIDTH = 52
 PLAYER_JUMP_HEIGHT = 60
 PLAYER_SHOOT_WIDTH = 62 #same height as PLAYER_HEIGHT
@@ -27,8 +27,8 @@ FRICTION = 0.4
 PLAYER_VELOCITY_X = 5
 PLAYER_VELOCITY_Y = -11
 
-PLAYER_BULLET_WIDTH = 16
-PLAYER_BULLET_HEIGHT = 12
+PLAYER_BULLET_WIDTH = 30
+PLAYER_BULLET_HEIGHT = 30
 PLAYER_BULLET_VELOCITY_X = 8
 
 HEALTH_WIDTH = 16
@@ -38,7 +38,7 @@ HEALTH_HEIGHT = 4
 METALL_WIDTH = 36
 METALL_HEIGHT = 30
 
-METALL_BULLET_WIDTH = 12
+METALL_BULLET_WIDTH = 20
 METALL_BULLET_HEIGHT = METALL_BULLET_WIDTH
 METALL_BULLET_VELOCITY_X = 2
 METALL_BULLET_VELOCITY_Y = METALL_BULLET_VELOCITY_X
@@ -67,13 +67,13 @@ player_image_right = load_image("DinoR.png", (PLAYER_WIDTH, PLAYER_HEIGHT))
 player_image_left = load_image("DinoL.png", (PLAYER_WIDTH, PLAYER_HEIGHT))
 player_image_jump_right = load_image("JumpR.png", (PLAYER_JUMP_WIDTH, PLAYER_JUMP_HEIGHT))
 player_image_jump_left = load_image("JumpL.png", (PLAYER_JUMP_WIDTH, PLAYER_JUMP_HEIGHT))
-player_image_shoot_right = load_image("megaman-right-shoot.png", (PLAYER_SHOOT_WIDTH, PLAYER_HEIGHT))
-player_image_shoot_left = load_image("megaman-left-shoot.png", (PLAYER_SHOOT_WIDTH, PLAYER_HEIGHT))
+player_image_shoot_right = load_image("Jump SHOOT.png", (PLAYER_SHOOT_WIDTH, PLAYER_HEIGHT))
+player_image_shoot_left = load_image("Jump Shoot L.png", (PLAYER_SHOOT_WIDTH, PLAYER_HEIGHT))
 player_image_jump_shoot_right = load_image("megaman-right-jump-shoot.png",
                                            (PLAYER_JUMP_SHOOT_WIDTH, PLAYER_JUMP_HEIGHT))
 player_image_jump_shoot_left = load_image("megaman-left-jump-shoot.png",
                                            (PLAYER_JUMP_SHOOT_WIDTH, PLAYER_JUMP_HEIGHT))
-player_image_bullet = load_image("bullet.png", (PLAYER_BULLET_WIDTH, PLAYER_BULLET_HEIGHT))
+player_image_bullet = load_image("image.png", (PLAYER_BULLET_WIDTH, PLAYER_BULLET_HEIGHT))
 
 floor_tile_image = load_image("2.png", (TILE_SIZE, TILE_SIZE))
 wall_tile_image = load_image("4.png", (TILE_SIZE, TILE_SIZE))
