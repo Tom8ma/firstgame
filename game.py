@@ -14,12 +14,12 @@ GAME_MAP = tile_map.GAME_MAP1
 
 PLAYER_X = GAME_WIDTH/2
 PLAYER_Y = GAME_HEIGHT/2
-PLAYER_WIDTH = 55
+PLAYER_WIDTH = 60
 PLAYER_HEIGHT = 63
 PLAYER_JUMP_WIDTH = 52
 PLAYER_JUMP_HEIGHT = 60
-PLAYER_SHOOT_WIDTH = 62 #same height as PLAYER_HEIGHT
-PLAYER_JUMP_SHOOT_WIDTH = 58 #same height as PLAYER_JUMP_HEIGHT
+PLAYER_SHOOT_WIDTH = 60 #same height as PLAYER_HEIGHT
+PLAYER_JUMP_SHOOT_WIDTH = 63 #same height as PLAYER_JUMP_HEIGHT
 PLAYER_DISTANCE = 5
 
 GRAVITY = 0.5
@@ -35,17 +35,17 @@ HEALTH_WIDTH = 16
 HEALTH_HEIGHT = 4
 
 #enemy variables
-METALL_WIDTH = 36
-METALL_HEIGHT = 30
+METALL_WIDTH = 58
+METALL_HEIGHT = 60
 
 METALL_BULLET_WIDTH = 20
 METALL_BULLET_HEIGHT = METALL_BULLET_WIDTH
 METALL_BULLET_VELOCITY_X = 2
 METALL_BULLET_VELOCITY_Y = METALL_BULLET_VELOCITY_X
 
-BLADER_WIDTH = 32
-BLADER_HEIGHT = 40
-BLADER_VELOCITY_X = 4
+BLADER_WIDTH = 50
+BLADER_HEIGHT = 55
+BLADER_VELOCITY_X = 2
 BLADER_VELOCITY_Y = 2
 
 #item variables
@@ -68,10 +68,10 @@ player_image_left = load_image("DinoL.png", (PLAYER_WIDTH, PLAYER_HEIGHT))
 player_image_jump_right = load_image("JumpR.png", (PLAYER_JUMP_WIDTH, PLAYER_JUMP_HEIGHT))
 player_image_jump_left = load_image("JumpL.png", (PLAYER_JUMP_WIDTH, PLAYER_JUMP_HEIGHT))
 player_image_shoot_right = load_image("Jump SHOOT.png", (PLAYER_SHOOT_WIDTH, PLAYER_HEIGHT))
-player_image_shoot_left = load_image("Jump Shoot L.png", (PLAYER_SHOOT_WIDTH, PLAYER_HEIGHT))
-player_image_jump_shoot_right = load_image("megaman-right-jump-shoot.png",
+player_image_shoot_left = load_image("Jump SHOOT L.png", (PLAYER_SHOOT_WIDTH, PLAYER_HEIGHT))
+player_image_jump_shoot_right = load_image("jumpshoot r.png",
                                            (PLAYER_JUMP_SHOOT_WIDTH, PLAYER_JUMP_HEIGHT))
-player_image_jump_shoot_left = load_image("megaman-left-jump-shoot.png",
+player_image_jump_shoot_left = load_image("jumpshoot l.png",
                                            (PLAYER_JUMP_SHOOT_WIDTH, PLAYER_JUMP_HEIGHT))
 player_image_bullet = load_image("image.png", (PLAYER_BULLET_WIDTH, PLAYER_BULLET_HEIGHT))
 
@@ -87,21 +87,23 @@ room_tile_image = load_image("room-tile.png", (TILE_SIZE, TILE_SIZE))
 rock_tile6_image = load_image("6.png", (TILE_SIZE, TILE_SIZE))
 rock_tile7_image = load_image("8.png", (TILE_SIZE, TILE_SIZE))
 
-metall_image_right = load_image("metall-right.png", (METALL_WIDTH, METALL_HEIGHT))
-metall_image_left = load_image("metall-left.png", (METALL_WIDTH, METALL_HEIGHT))
-metall_image_guard_right = load_image("metall-right-guard.png", (METALL_WIDTH, METALL_HEIGHT))
-metall_image_guard_left = load_image("metall-left-guard.png", (METALL_WIDTH, METALL_HEIGHT))
+metall_image_right = load_image("VOLCA.png", (METALL_WIDTH, METALL_HEIGHT))
+metall_image_left = load_image("VOLCA.png", (METALL_WIDTH, METALL_HEIGHT))
+metall_image_guard_right = load_image("VOLCA2.png", (METALL_WIDTH, METALL_HEIGHT))
+metall_image_guard_left = load_image("VOLCA2.png", (METALL_WIDTH, METALL_HEIGHT))
 metall_image_bullet = load_image("metall-bullet.png", (METALL_BULLET_WIDTH, METALL_BULLET_HEIGHT))
+metall_image_bullet_right = load_image("FIREBALL.png", (METALL_BULLET_WIDTH, METALL_BULLET_HEIGHT))
+metall_image_bullet_left = load_image("FIREBALL - kopie.png", (METALL_BULLET_WIDTH, METALL_BULLET_HEIGHT))
 health_image = load_image("health.png", (HEALTH_WIDTH, HEALTH_HEIGHT))
 life_energy_image = load_image("life-energy.png", (LIFE_ENERGY_WIDTH, LIFE_ENERGY_HEIGHT))
 big_life_energy_image = load_image("big-life-energy.png", (BIG_LIFE_ENERGY_WIDTH, BIG_LIFE_ENERGY_HEIGHT))
-spike_image = load_image("crate.png", (TILE_SIZE, TILE_SIZE))
-blader_image_right = load_image("blader-right.png", (BLADER_WIDTH, BLADER_HEIGHT))
-blader_image_left = load_image("blader-left.png", (BLADER_WIDTH, BLADER_HEIGHT))
+spike_image = load_image("Cactus (2).png", (TILE_SIZE, TILE_SIZE))
+blader_image_right = load_image("flying ER.png", (BLADER_WIDTH, BLADER_HEIGHT))
+blader_image_left = load_image("flying EL.png", (BLADER_WIDTH, BLADER_HEIGHT))
 
 pygame.init()
 window = pygame.display.set_mode((GAME_WIDTH, GAME_HEIGHT))
-pygame.display.set_caption("Kenny Yip Coding - PyGame")
+pygame.display.set_caption("dino shooting game")
 pygame.display.set_icon(player_image_right)
 clock = pygame.time.Clock()
 
@@ -174,13 +176,16 @@ class Metall(pygame.Rect):
             if metall.direction == "left":
                 pygame.Rect.__init__(self, metall.x, metall.y + TILE_SIZE/2,
                                      METALL_BULLET_WIDTH, METALL_BULLET_HEIGHT)
+                self.image = metall_image_bullet_left
                 self.velocity_x = -METALL_BULLET_VELOCITY_X
+            
+            
             elif metall.direction == "right":
                 pygame.Rect.__init__(self, metall.x + metall.width, metall.y + TILE_SIZE/2,
                                      METALL_BULLET_WIDTH, METALL_BULLET_HEIGHT)
                 self.velocity_x = METALL_BULLET_VELOCITY_X
+                self.image = metall_image_bullet_right
             self.velocity_y = velocity_y
-            self.image = metall_image_bullet
             self.used = False                
 
     def __init__(self, x, y):
@@ -205,6 +210,8 @@ class Metall(pygame.Rect):
                 self.image = metall_image_guard_left
             else:
                 self.image = metall_image_left
+                
+
     
     def set_shooting(self):
         if abs(self.x - player.x) <= TILE_SIZE*4:
@@ -236,6 +243,8 @@ class Blader(pygame.Rect):
             self.image = blader_image_right
         elif self.direction == "left":
             self.image = blader_image_left
+
+
 
 class Tile(pygame.Rect):
     def __init__(self, x, y, image):
@@ -488,6 +497,9 @@ def draw():
 
     for item in items:
         window.blit(item.image, item)
+    
+    for bullet in player.bullets:
+        window.blit(bullet.image, bullet)
 
     pygame.draw.rect(window, "black", (TILE_SIZE, TILE_SIZE, HEALTH_WIDTH, HEALTH_HEIGHT * player.max_health))
     for i in range(player.max_health - player.health, player.max_health):
