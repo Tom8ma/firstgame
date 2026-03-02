@@ -16,8 +16,8 @@ PLAYER_X = GAME_WIDTH/2
 PLAYER_Y = GAME_HEIGHT/2
 PLAYER_WIDTH = 60
 PLAYER_HEIGHT = 63
-PLAYER_JUMP_WIDTH = 52
-PLAYER_JUMP_HEIGHT = 60
+PLAYER_JUMP_WIDTH = 60
+PLAYER_JUMP_HEIGHT = 63
 PLAYER_SHOOT_WIDTH = 60 #same height as PLAYER_HEIGHT
 PLAYER_JUMP_SHOOT_WIDTH = 63 #same height as PLAYER_JUMP_HEIGHT
 PLAYER_DISTANCE = 5
@@ -67,8 +67,8 @@ player_image_right = load_image("DinoR.png", (PLAYER_WIDTH, PLAYER_HEIGHT))
 player_image_left = load_image("DinoL.png", (PLAYER_WIDTH, PLAYER_HEIGHT))
 player_image_jump_right = load_image("JumpR.png", (PLAYER_JUMP_WIDTH, PLAYER_JUMP_HEIGHT))
 player_image_jump_left = load_image("JumpL.png", (PLAYER_JUMP_WIDTH, PLAYER_JUMP_HEIGHT))
-player_image_shoot_right = load_image("Jump SHOOT.png", (PLAYER_SHOOT_WIDTH, PLAYER_HEIGHT))
-player_image_shoot_left = load_image("Jump SHOOT L.png", (PLAYER_SHOOT_WIDTH, PLAYER_HEIGHT))
+player_image_shoot_right = load_image("SHOOT.png", (PLAYER_SHOOT_WIDTH, PLAYER_HEIGHT))
+player_image_shoot_left = load_image("SHOOT L.png", (PLAYER_SHOOT_WIDTH, PLAYER_HEIGHT))
 player_image_jump_shoot_right = load_image("jumpshoot r.png",
                                            (PLAYER_JUMP_SHOOT_WIDTH, PLAYER_JUMP_HEIGHT))
 player_image_jump_shoot_left = load_image("jumpshoot l.png",
@@ -501,9 +501,9 @@ def draw():
     for bullet in player.bullets:
         window.blit(bullet.image, bullet)
 
-    pygame.draw.rect(window, "black", (TILE_SIZE, TILE_SIZE, HEALTH_WIDTH, HEALTH_HEIGHT * player.max_health))
-    for i in range(player.max_health - player.health, player.max_health):
-        window.blit(health_image, (TILE_SIZE, TILE_SIZE + i*HEALTH_HEIGHT, HEALTH_WIDTH, HEALTH_HEIGHT))
+    pygame.draw.rect(window, "black", (TILE_SIZE, TILE_SIZE, HEALTH_WIDTH * player.max_health, HEALTH_HEIGHT))
+    for i in range(player.health):
+        window.blit(health_image, (TILE_SIZE + i * HEALTH_WIDTH, TILE_SIZE))
 
 #start game
 player = Player()

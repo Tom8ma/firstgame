@@ -1,4 +1,5 @@
-a = int(input("getal_1: "))
-b = int(input("getal_2: "))
-uitkomst = a*b
-print("uitkomst=  ",uitkomst )
+i = input("geef een gatel: ")
+b = int(input("wachtwoord:"))
+for x in range(b):
+    print( i )
+    
