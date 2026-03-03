@@ -31,8 +31,8 @@ PLAYER_BULLET_WIDTH = 30
 PLAYER_BULLET_HEIGHT = 30
 PLAYER_BULLET_VELOCITY_X = 8
 
-HEALTH_WIDTH = 16
-HEALTH_HEIGHT = 4
+HEALTH_WIDTH = 10
+HEALTH_HEIGHT = 16
 
 #enemy variables
 METALL_WIDTH = 58
@@ -49,8 +49,8 @@ BLADER_VELOCITY_X = 2
 BLADER_VELOCITY_Y = 2
 
 #item variables
-LIFE_ENERGY_WIDTH = 20
-LIFE_ENERGY_HEIGHT = 24
+LIFE_ENERGY_WIDTH = 50
+LIFE_ENERGY_HEIGHT = 50
 BIG_LIFE_ENERGY_WIDTH = 28
 BIG_LIFE_ENERGY_HEIGHT = 32
 ITEM_VELOCITY_Y = -11 #item flies up first and gravity pulls it down
@@ -77,7 +77,7 @@ player_image_bullet = load_image("image.png", (PLAYER_BULLET_WIDTH, PLAYER_BULLE
 
 floor_tile_image = load_image("2.png", (TILE_SIZE, TILE_SIZE))
 wall_tile_image = load_image("4.png", (TILE_SIZE, TILE_SIZE))
-beam_tile_image = load_image("beam-tile.png", (TILE_SIZE, TILE_SIZE))
+beam_tile_image = load_image("crate.png", (TILE_SIZE, TILE_SIZE))
 rock_tile1_image = load_image("1.png", (TILE_SIZE, TILE_SIZE))
 rock_tile2_image = load_image("2.png", (TILE_SIZE, TILE_SIZE))
 rock_tile3_image = load_image("3.png", (TILE_SIZE, TILE_SIZE))
@@ -94,8 +94,9 @@ metall_image_guard_left = load_image("VOLCA2.png", (METALL_WIDTH, METALL_HEIGHT)
 metall_image_bullet = load_image("metall-bullet.png", (METALL_BULLET_WIDTH, METALL_BULLET_HEIGHT))
 metall_image_bullet_right = load_image("FIREBALL.png", (METALL_BULLET_WIDTH, METALL_BULLET_HEIGHT))
 metall_image_bullet_left = load_image("FIREBALL - kopie.png", (METALL_BULLET_WIDTH, METALL_BULLET_HEIGHT))
-health_image = load_image("health.png", (HEALTH_WIDTH, HEALTH_HEIGHT))
-life_energy_image = load_image("life-energy.png", (LIFE_ENERGY_WIDTH, LIFE_ENERGY_HEIGHT))
+health_image = load_image("levens.png", (HEALTH_WIDTH, HEALTH_HEIGHT))
+health_empty_image = load_image("health_empty.png", (HEALTH_WIDTH, HEALTH_HEIGHT))
+life_energy_image = load_image("HOTDOG.png", (LIFE_ENERGY_WIDTH, LIFE_ENERGY_HEIGHT))
 big_life_energy_image = load_image("big-life-energy.png", (BIG_LIFE_ENERGY_WIDTH, BIG_LIFE_ENERGY_HEIGHT))
 spike_image = load_image("Cactus (2).png", (TILE_SIZE, TILE_SIZE))
 blader_image_right = load_image("flying ER.png", (BLADER_WIDTH, BLADER_HEIGHT))
@@ -133,7 +134,7 @@ class Player(pygame.Rect):
         self.direction = "right"
         self.jumping = False
         self.invincible = False
-        self.max_health = 28
+        self.max_health = 20
         self.health = self.max_health
         self.shooting = False
         self.bullets = []
@@ -326,7 +327,7 @@ def drop_item(character):
     random_number = random.randint(1, 100) #inclusive of 100
     if 0 < random_number <= 20:
         items.append(Item(character.x, character.y, big_life_energy_image))
-    elif 20 < random_number <= 50:
+    elif 20 < random_number <= 100:
         items.append(Item(character.x, character.y, life_energy_image))
 
 def move_player_x(velocity_x):
@@ -502,6 +503,17 @@ def draw():
         window.blit(bullet.image, bullet)
 
     pygame.draw.rect(window, "black", (TILE_SIZE, TILE_SIZE, HEALTH_WIDTH * player.max_health, HEALTH_HEIGHT))
+    # Loop door alle mogelijke gezondheidspunten
+    for i in range(player.max_health):
+        x_pos = TILE_SIZE + i * HEALTH_WIDTH
+        y_pos = TILE_SIZE
+        
+        if i < player.health:
+            # Teken vol blokje
+            window.blit(health_image, (x_pos, y_pos))
+        else:
+            # Teken leeg blokje (omdat de speler damage heeft gehad)
+            window.blit(health_empty_image, (x_pos, y_pos))
     for i in range(player.health):
         window.blit(health_image, (TILE_SIZE + i * HEALTH_WIDTH, TILE_SIZE))
 
