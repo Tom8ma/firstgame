@@ -51,8 +51,8 @@ BLADER_VELOCITY_Y = 2
 #item variables
 LIFE_ENERGY_WIDTH = 50
 LIFE_ENERGY_HEIGHT = 50
-BIG_LIFE_ENERGY_WIDTH = 28
-BIG_LIFE_ENERGY_HEIGHT = 32
+BIG_LIFE_ENERGY_WIDTH = 50
+BIG_LIFE_ENERGY_HEIGHT = 50
 ITEM_VELOCITY_Y = -11 #item flies up first and gravity pulls it down
 
 #images
@@ -85,7 +85,14 @@ rock_tile4_image = load_image("5.png", (TILE_SIZE, TILE_SIZE))
 door_tile_image = load_image("door-tile.png", (TILE_SIZE, TILE_SIZE))
 room_tile_image = load_image("room-tile.png", (TILE_SIZE, TILE_SIZE))
 rock_tile6_image = load_image("6.png", (TILE_SIZE, TILE_SIZE))
-rock_tile7_image = load_image("8.png", (TILE_SIZE, TILE_SIZE))
+rock_tile8_image = load_image("8.png", (TILE_SIZE, TILE_SIZE))
+rock_tile10_image = load_image("10.png", (TILE_SIZE, TILE_SIZE))
+rock_tile14_image = load_image("14.png", (TILE_SIZE, TILE_SIZE))
+rock_tile15_image = load_image("15.png", (TILE_SIZE, TILE_SIZE))
+rock_tile16_image = load_image("16.png", (TILE_SIZE, TILE_SIZE))
+rock_tile9_image = load_image("9.png", (TILE_SIZE, TILE_SIZE))
+rock_tile13_image = load_image("13.png", (TILE_SIZE, TILE_SIZE))
+rock_tile12_image = load_image("12.png", (TILE_SIZE, TILE_SIZE))
 
 metall_image_right = load_image("VOLCA.png", (METALL_WIDTH, METALL_HEIGHT))
 metall_image_left = load_image("VOLCA.png", (METALL_WIDTH, METALL_HEIGHT))
@@ -97,7 +104,7 @@ metall_image_bullet_left = load_image("FIREBALL - kopie.png", (METALL_BULLET_WID
 health_image = load_image("levens.png", (HEALTH_WIDTH, HEALTH_HEIGHT))
 health_empty_image = load_image("health_empty.png", (HEALTH_WIDTH, HEALTH_HEIGHT))
 life_energy_image = load_image("HOTDOG.png", (LIFE_ENERGY_WIDTH, LIFE_ENERGY_HEIGHT))
-big_life_energy_image = load_image("big-life-energy.png", (BIG_LIFE_ENERGY_WIDTH, BIG_LIFE_ENERGY_HEIGHT))
+big_life_energy_image = load_image("KALOKOEN.png", (BIG_LIFE_ENERGY_WIDTH, BIG_LIFE_ENERGY_HEIGHT))
 spike_image = load_image("Cactus (2).png", (TILE_SIZE, TILE_SIZE))
 blader_image_right = load_image("flying ER.png", (BLADER_WIDTH, BLADER_HEIGHT))
 blader_image_left = load_image("flying EL.png", (BLADER_WIDTH, BLADER_HEIGHT))
@@ -295,7 +302,21 @@ def create_map():
             elif map_code == 13:
                 tiles.append(Tile(x, y, rock_tile6_image))
             elif map_code == 14:
-                tiles.append(Tile(x, y, rock_tile7_image))
+                tiles.append(Tile(x, y, rock_tile8_image))
+            elif map_code == 15:
+                tiles.append(Tile(x, y, rock_tile10_image))
+            elif map_code == 16:
+                tiles.append(Tile(x, y, rock_tile14_image))
+            elif map_code == 17:
+                tiles.append(Tile(x, y, rock_tile15_image))
+            elif map_code == 18:
+                tiles.append(Tile(x, y, rock_tile16_image))
+            elif map_code == 19:
+                tiles.append(Tile(x, y, rock_tile9_image))
+            elif map_code == 20:
+                tiles.append(Tile(x, y, rock_tile12_image))
+            elif map_code == 21:
+                tiles.append(Tile(x, y, rock_tile13_image))
             
             
 def check_tile_collision(character):
