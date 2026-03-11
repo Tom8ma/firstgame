@@ -93,6 +93,9 @@ rock_tile16_image = load_image("16.png", (TILE_SIZE, TILE_SIZE))
 rock_tile9_image = load_image("9.png", (TILE_SIZE, TILE_SIZE))
 rock_tile13_image = load_image("13.png", (TILE_SIZE, TILE_SIZE))
 rock_tile12_image = load_image("12.png", (TILE_SIZE, TILE_SIZE))
+rock_tile17_image = load_image("17.png", (TILE_SIZE, TILE_SIZE))
+rock_tile_BARRIER_image = load_image("BARRIER.png", (TILE_SIZE, TILE_SIZE))
+
 
 metall_image_right = load_image("VOLCA.png", (METALL_WIDTH, METALL_HEIGHT))
 metall_image_left = load_image("VOLCA.png", (METALL_WIDTH, METALL_HEIGHT))
@@ -105,9 +108,14 @@ health_image = load_image("levens.png", (HEALTH_WIDTH, HEALTH_HEIGHT))
 health_empty_image = load_image("health_empty.png", (HEALTH_WIDTH, HEALTH_HEIGHT))
 life_energy_image = load_image("HOTDOG.png", (LIFE_ENERGY_WIDTH, LIFE_ENERGY_HEIGHT))
 big_life_energy_image = load_image("KALOKOEN.png", (BIG_LIFE_ENERGY_WIDTH, BIG_LIFE_ENERGY_HEIGHT))
-spike_image = load_image("Cactus (2).png", (TILE_SIZE, TILE_SIZE))
 blader_image_right = load_image("flying ER.png", (BLADER_WIDTH, BLADER_HEIGHT))
 blader_image_left = load_image("flying EL.png", (BLADER_WIDTH, BLADER_HEIGHT))
+spike_images = [
+    load_image("Cactus (1).png", (TILE_SIZE, TILE_SIZE *2)),
+    load_image("Cactus (2).png", (TILE_SIZE, TILE_SIZE)),
+    load_image("Cactus (3).png", (TILE_SIZE, TILE_SIZE * 1.5))
+]
+
 
 pygame.init()
 window = pygame.display.set_mode((GAME_WIDTH, GAME_HEIGHT))
@@ -290,7 +298,9 @@ def create_map():
             elif map_code == 7:
                 background_tiles.append(Tile(x, y, beam_tile_image))
             elif map_code == 8:
-                spikes.append(Tile(x, y, spike_image))
+                    image = random.choice(spike_images)
+                    y_corrected = y + TILE_SIZE - image.get_height()
+                    spikes.append(Tile(x, y_corrected, image))
             elif map_code == 9:
                 background_tiles.append(Tile(x, y, door_tile_image))
             elif map_code == 10:
@@ -317,6 +327,10 @@ def create_map():
                 tiles.append(Tile(x, y, rock_tile12_image))
             elif map_code == 21:
                 tiles.append(Tile(x, y, rock_tile13_image))
+            elif map_code == 22:
+                tiles.append(Tile(x, y, rock_tile17_image))
+            elif map_code == 23:
+                tiles.append(Tile(x, y, rock_tile_BARRIER_image))
             
             
 def check_tile_collision(character):
