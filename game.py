@@ -11,6 +11,8 @@ COLUMN_COUNT = ROW_COUNT
 GAME_WIDTH = TILE_SIZE * COLUMN_COUNT
 GAME_HEIGHT = TILE_SIZE * ROW_COUNT
 GAME_MAP = tile_map.GAME_MAP1
+SPIKE_SIZE = TILE_SIZE *2
+
 
 PLAYER_X = GAME_WIDTH/2
 PLAYER_Y = GAME_HEIGHT/2
@@ -260,7 +262,10 @@ class Blader(pygame.Rect):
         elif self.direction == "left":
             self.image = blader_image_left
 
-
+class Spike(pygame.Rect):
+    def __init__(self, x, y, image):
+        pygame.Rect.__init__(self, x, y, image.get_width(), image.get_height() - 10)
+        self.image = image
 
 class Tile(pygame.Rect):
     def __init__(self, x, y, image):
@@ -298,9 +303,8 @@ def create_map():
             elif map_code == 7:
                 background_tiles.append(Tile(x, y, beam_tile_image))
             elif map_code == 8:
-                    image = random.choice(spike_images)
-                    y_corrected = y + TILE_SIZE - image.get_height()
-                    spikes.append(Tile(x, y_corrected, image))
+                image = random.choice(spike_images)
+                spikes.append(Tile(x, y + TILE_SIZE - image.get_height(), image))
             elif map_code == 9:
                 background_tiles.append(Tile(x, y, door_tile_image))
             elif map_code == 10:
