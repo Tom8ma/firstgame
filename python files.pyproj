@@ -1,0 +1,177 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" DefaultTargets="Build">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{53534e4f-0093-4698-9335-7d64c9b26ff8}</ProjectGuid>
+    <ProjectHome />
+    <StartupFile>game.py</StartupFile>
+    <SearchPath />
+    <WorkingDirectory>.</WorkingDirectory>
+    <OutputPath>.</OutputPath>
+    <ProjectTypeGuids>{888888a0-9f3d-457c-b088-3a5042f75d52}</ProjectTypeGuids>
+    <LaunchProvider>Standard Python launcher</LaunchProvider>
+    <InterpreterId />
+    <TestFramework>Pytest</TestFramework>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)' == 'Debug'" />
+  <PropertyGroup Condition="'$(Configuration)' == 'Release'" />
+  <PropertyGroup>
+    <VisualStudioVersion Condition=" '$(VisualStudioVersion)' == '' ">10.0</VisualStudioVersion>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="bureaublad python.py" />
+    <Compile Include="dinogame.py" />
+    <Compile Include="game.py" />
+    <Compile Include="PROJECT ELECTRONICA.py" />
+    <Compile Include="python.py" />
+    <Compile Include="PythonApplication1\PythonApplication1.py" />
+    <Compile Include="tempCodeRunnerFile.py" />
+    <Compile Include="test.py" />
+    <Compile Include="tile_map.py" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="dino\Dead %281%29.png" />
+    <Content Include="dino\dino.png" />
+    <Content Include="dino\ground.jpg" />
+    <Content Include="dino\Idle %281%29.png" />
+    <Content Include="dino\Jump %281%29.png" />
+    <Content Include="dino\Run %281%29.png" />
+    <Content Include="freedinosprite\png\Dead %281%29.png" />
+    <Content Include="freedinosprite\png\Dead %282%29.png" />
+    <Content Include="freedinosprite\png\Dead %283%29.png" />
+    <Content Include="freedinosprite\png\Dead %284%29.png" />
+    <Content Include="freedinosprite\png\Dead %285%29.png" />
+    <Content Include="freedinosprite\png\Dead %286%29.png" />
+    <Content Include="freedinosprite\png\Dead %287%29.png" />
+    <Content Include="freedinosprite\png\Dead %288%29.png" />
+    <Content Include="freedinosprite\png\Dino.png" />
+    <Content Include="freedinosprite\png\Idle %281%29.png" />
+    <Content Include="freedinosprite\png\Idle %2810%29.png" />
+    <Content Include="freedinosprite\png\Idle %282%29.png" />
+    <Content Include="freedinosprite\png\Idle %283%29.png" />
+    <Content Include="freedinosprite\png\Idle %284%29.png" />
+    <Content Include="freedinosprite\png\Idle %285%29.png" />
+    <Content Include="freedinosprite\png\Idle %286%29.png" />
+    <Content Include="freedinosprite\png\Idle %287%29.png" />
+    <Content Include="freedinosprite\png\Idle %288%29.png" />
+    <Content Include="freedinosprite\png\Idle %289%29.png" />
+    <Content Include="freedinosprite\png\Jump %281%29.png" />
+    <Content Include="freedinosprite\png\Jump %2810%29.png" />
+    <Content Include="freedinosprite\png\Jump %2811%29.png" />
+    <Content Include="freedinosprite\png\Jump %2812%29.png" />
+    <Content Include="freedinosprite\png\Jump %282%29.png" />
+    <Content Include="freedinosprite\png\Jump %283%29.png" />
+    <Content Include="freedinosprite\png\Jump %284%29.png" />
+    <Content Include="freedinosprite\png\Jump %285%29.png" />
+    <Content Include="freedinosprite\png\Jump %286%29.png" />
+    <Content Include="freedinosprite\png\Jump %287%29.png" />
+    <Content Include="freedinosprite\png\Jump %288%29.png" />
+    <Content Include="freedinosprite\png\Jump %289%29.png" />
+    <Content Include="freedinosprite\png\Run %281%29.png" />
+    <Content Include="freedinosprite\png\Run %282%29.png" />
+    <Content Include="freedinosprite\png\Run %283%29.png" />
+    <Content Include="freedinosprite\png\Run %284%29.png" />
+    <Content Include="freedinosprite\png\Run %285%29.png" />
+    <Content Include="freedinosprite\png\Run %286%29.png" />
+    <Content Include="freedinosprite\png\Run %287%29.png" />
+    <Content Include="freedinosprite\png\Run %288%29.png" />
+    <Content Include="freedinosprite\png\Walk %281%29.png" />
+    <Content Include="freedinosprite\png\Walk %2810%29.png" />
+    <Content Include="freedinosprite\png\Walk %282%29.png" />
+    <Content Include="freedinosprite\png\Walk %283%29.png" />
+    <Content Include="freedinosprite\png\Walk %284%29.png" />
+    <Content Include="freedinosprite\png\Walk %285%29.png" />
+    <Content Include="freedinosprite\png\Walk %286%29.png" />
+    <Content Include="freedinosprite\png\Walk %287%29.png" />
+    <Content Include="freedinosprite\png\Walk %288%29.png" />
+    <Content Include="freedinosprite\png\Walk %289%29.png" />
+    <Content Include="images\1.png" />
+    <Content Include="images\10.png" />
+    <Content Include="images\11.png" />
+    <Content Include="images\12.png" />
+    <Content Include="images\13.png" />
+    <Content Include="images\14.png" />
+    <Content Include="images\15.png" />
+    <Content Include="images\16.png" />
+    <Content Include="images\17.png" />
+    <Content Include="images\2.png" />
+    <Content Include="images\3.png" />
+    <Content Include="images\4.png" />
+    <Content Include="images\5.png" />
+    <Content Include="images\6.png" />
+    <Content Include="images\7.png" />
+    <Content Include="images\8.png" />
+    <Content Include="images\9.png" />
+    <Content Include="images\background.png" />
+    <Content Include="images\background2.png" />
+    <Content Include="images\BARRIER.png" />
+    <Content Include="images\beam-tile %281%29.png" />
+    <Content Include="images\beam-tile.png" />
+    <Content Include="images\BG fout.png" />
+    <Content Include="images\BG.png" />
+    <Content Include="images\big-life-energy.png" />
+    <Content Include="images\blader-left.png" />
+    <Content Include="images\blader-right.png" />
+    <Content Include="images\bullet.png" />
+    <Content Include="images\Cactus %281%29.png" />
+    <Content Include="images\Cactus %282%29.png" />
+    <Content Include="images\Cactus %283%29.png" />
+    <Content Include="images\Crate.png" />
+    <Content Include="images\DinoL.png" />
+    <Content Include="images\DinoR.png" />
+    <Content Include="images\door-tile.png" />
+    <Content Include="images\fire.png" />
+    <Content Include="images\FIREBALL - kopie.png" />
+    <Content Include="images\FIREBALL.png" />
+    <Content Include="images\floor-tile.png" />
+    <Content Include="images\flying E.png" />
+    <Content Include="images\flying E2.png" />
+    <Content Include="images\flying EL.png" />
+    <Content Include="images\flying ER.png" />
+    <Content Include="images\gutsman.png" />
+    <Content Include="images\health.png" />
+    <Content Include="images\health_empty.png" />
+    <Content Include="images\HOTDOG.png" />
+    <Content Include="images\image.png" />
+    <Content Include="images\JumpL.png" />
+    <Content Include="images\JumpR.png" />
+    <Content Include="images\Jumpshoot l.png" />
+    <Content Include="images\Jumpshoot r.png" />
+    <Content Include="images\KALOKOEN.png" />
+    <Content Include="images\levens.png" />
+    <Content Include="images\life-energy.png" />
+    <Content Include="images\megaman-left-jump-shoot.png" />
+    <Content Include="images\megaman-left-jump.png" />
+    <Content Include="images\megaman-left-shoot.png" />
+    <Content Include="images\megaman-left.png" />
+    <Content Include="images\megaman-right-jump-shoot.png" />
+    <Content Include="images\megaman-right-jump.png" />
+    <Content Include="images\megaman-right-shoot.png" />
+    <Content Include="images\megaman-right.png" />
+    <Content Include="images\metall-bullet.png" />
+    <Content Include="images\metall-left-guard.png" />
+    <Content Include="images\metall-left.png" />
+    <Content Include="images\metall-right-guard.png" />
+    <Content Include="images\metall-right.png" />
+    <Content Include="images\rock-tile1.png" />
+    <Content Include="images\rock-tile2.png" />
+    <Content Include="images\rock-tile3.png" />
+    <Content Include="images\rock-tile4.png" />
+    <Content Include="images\room-tile.png" />
+    <Content Include="images\SHOOT L.png" />
+    <Content Include="images\SHOOT.png" />
+    <Content Include="images\spike.png" />
+    <Content Include="images\VOLCA.png" />
+    <Content Include="images\VOLCA2.png" />
+    <Content Include="images\wall-tile.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="dino" />
+    <Folder Include="freedinosprite\" />
+    <Folder Include="freedinosprite\png" />
+    <Folder Include="images" />
+    <Folder Include="PythonApplication1" />
+  </ItemGroup>
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
+</Project>

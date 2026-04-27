@@ -13,7 +13,6 @@ GAME_HEIGHT = TILE_SIZE * ROW_COUNT
 GAME_MAP = tile_map.GAME_MAP1
 SPIKE_SIZE = TILE_SIZE *2
 
-
 PLAYER_X = GAME_WIDTH/2
 PLAYER_Y = GAME_HEIGHT/2
 PLAYER_WIDTH = 60
@@ -59,7 +58,9 @@ ITEM_VELOCITY_Y = -11 #item flies up first and gravity pulls it down
 
 #images
 def load_image(image_name, scale=None):
-    image = pygame.image.load(os.path.join("images", image_name))
+    base_path = os.path.dirname(os.path.abspath(__file__))
+    image_path = os.path.join(base_path, "images", image_name)
+    image = pygame.image.load(image_path)
     if scale is not None:
         image = pygame.transform.scale(image, scale)
     return image
@@ -74,7 +75,7 @@ player_image_shoot_left = load_image("SHOOT L.png", (PLAYER_SHOOT_WIDTH, PLAYER_
 player_image_jump_shoot_right = load_image("jumpshoot r.png",
                                            (PLAYER_JUMP_SHOOT_WIDTH, PLAYER_JUMP_HEIGHT))
 player_image_jump_shoot_left = load_image("jumpshoot l.png",
-                                           (PLAYER_JUMP_SHOOT_WIDTH, PLAYER_JUMP_HEIGHT))
+                                          (PLAYER_JUMP_SHOOT_WIDTH, PLAYER_JUMP_HEIGHT))
 player_image_bullet = load_image("image.png", (PLAYER_BULLET_WIDTH, PLAYER_BULLET_HEIGHT))
 
 floor_tile_image = load_image("2.png", (TILE_SIZE, TILE_SIZE))
@@ -118,7 +119,6 @@ spike_images = [
     load_image("Cactus (3).png", (TILE_SIZE, TILE_SIZE * 1.5))
 ]
 
-
 pygame.init()
 window = pygame.display.set_mode((GAME_WIDTH, GAME_HEIGHT))
 pygame.display.set_caption("dino shooting game")
@@ -155,7 +155,7 @@ class Player(pygame.Rect):
         self.health = self.max_health
         self.shooting = False
         self.bullets = []
-    
+
     def update_image(self):
         if self.jumping and self.shooting:
             if self.direction == "right":
@@ -177,11 +177,11 @@ class Player(pygame.Rect):
                 self.image = player_image_right
             elif self.direction == "left":
                 self.image = player_image_left
-    
+
     def set_invincible(self, milliseconds=1000):
         self.invincible = True
         pygame.time.set_timer(INVINCIBLE_END, milliseconds, 1) #event called, milliseconds, repetitions
-    
+
     def set_shooting(self):
         if not self.shooting:
             self.shooting = True
@@ -196,8 +196,8 @@ class Metall(pygame.Rect):
                                      METALL_BULLET_WIDTH, METALL_BULLET_HEIGHT)
                 self.image = metall_image_bullet_left
                 self.velocity_x = -METALL_BULLET_VELOCITY_X
-            
-            
+
+
             elif metall.direction == "right":
                 pygame.Rect.__init__(self, metall.x + metall.width, metall.y + TILE_SIZE/2,
                                      METALL_BULLET_WIDTH, METALL_BULLET_HEIGHT)
@@ -216,7 +216,7 @@ class Metall(pygame.Rect):
         self.bullets = []
         self.last_fired = pygame.time.get_ticks() #time in ms after pygame.initialize
         self.guarding = False
-    
+
     def update_image(self):
         if self.direction == "right":
             if self.guarding:
@@ -228,9 +228,8 @@ class Metall(pygame.Rect):
                 self.image = metall_image_guard_left
             else:
                 self.image = metall_image_left
-                
 
-    
+
     def set_shooting(self):
         if abs(self.x - player.x) <= TILE_SIZE*4:
             self.guarding = False
@@ -255,7 +254,7 @@ class Blader(pygame.Rect):
         self.start_y = y
         self.max_range_x = TILE_SIZE*4
         self.max_range_y = TILE_SIZE
-    
+
     def update_image(self):
         if self.direction == "right":
             self.image = blader_image_right
@@ -335,8 +334,8 @@ def create_map():
                 tiles.append(Tile(x, y, rock_tile17_image))
             elif map_code == 23:
                 tiles.append(Tile(x, y, rock_tile_BARRIER_image))
-            
-            
+
+
 def check_tile_collision(character):
     for tile in tiles:
         if character.colliderect(tile):
@@ -381,40 +380,27 @@ def move_map_x(velocity_x):
 
     for tile in tiles:
         tile.x += velocity_x
-    
+
     for metall in metalls:
         metall.x += velocity_x
         for bullet in metall.bullets:
             bullet.x += velocity_x
-    
+            
+    for bullet in metall_bullets:
+        bullet.x += velocity_x
+
     for item in items:
         item.x += velocity_x
-    
+
     for spike in spikes:
         spike.x += velocity_x
-    
+
     for blader in bladers:
         blader.start_x += velocity_x
         blader.x += velocity_x
 
 def move():
-    global metalls, items, bladers
-    #x movement
-    # if player.direction == "left" and player.velocity_x < 0:
-    #     player.velocity_x += FRICTION
-    # elif player.direction == "right" and player.velocity_x > 0:
-    #     player.velocity_x -= FRICTION
-    # else:
-    #     player.velocity_x = 0
-
-    # player.x += player.velocity_x
-    # if player.x < 0:
-    #     player.x = 0
-    # elif player.x + player.width > GAME_WIDTH:
-    #     player.x = GAME_WIDTH - player.width
-
-    # check_tile_collision_x(player)
-
+    global metalls, items, bladers , metall_bullets
     #y movement
     player.velocity_y += GRAVITY
     player.y += player.velocity_y
@@ -434,14 +420,26 @@ def move():
                     metall.health -= 1
                     if metall.health <= 0:
                         drop_item(metall)
-        
+                        metall_bullets.extend(metall.bullets)
+                        
+        for bullet in metall_bullets:
+            bullet.x += bullet.velocity_x
+            bullet.y += bullet.velocity_y
+            if not player.invincible and player.colliderect(bullet):
+                player.health -= 2
+                bullet.used = True
+                player.set_invincible()
+
+        metall_bullets = [bullet for bullet in metall.bullets if not bullet.used \
+                          and bullet.x + bullet.width > 0 and bullet.x < GAME_WIDTH]
+
         for blader in bladers:
             if blader.health > 0 and not bullet.used and bullet.colliderect(blader):
                 bullet.used = True
                 blader.health -= 1
                 if blader.health <= 0:
                     drop_item(blader)
-    
+
     player.bullets = [bullet for bullet in player.bullets if not bullet.used \
                       and bullet.x + bullet.width > 0 and bullet.x < GAME_WIDTH]
     metalls = [metall for metall in metalls if metall.health > 0]
@@ -453,7 +451,7 @@ def move():
             metall.direction = "left"
         else:
             metall.direction = "right"
-        
+
         metall.velocity_y += GRAVITY
         metall.y += metall.velocity_y
         check_tile_collision_y(metall)
@@ -461,7 +459,7 @@ def move():
         if not player.invincible and player.colliderect(metall):
             player.health -= 1
             player.set_invincible()
-        
+
         #enemy bullets
         metall.set_shooting()
         for bullet in metall.bullets:
@@ -471,7 +469,7 @@ def move():
                 player.health -= 2
                 bullet.used = True
                 player.set_invincible()
-        
+
         metall.bullets = [bullet for bullet in metall.bullets if not bullet.used \
                           and bullet.x + bullet.width > 0 and bullet.x < GAME_WIDTH]
 
@@ -489,7 +487,7 @@ def move():
             blader.velocity_y *= -1
         else:
             blader.y += blader.velocity_y
-        
+
         if not player.invincible and player.colliderect(blader):
             player.health -= 1
             player.set_invincible()
@@ -515,7 +513,7 @@ def draw():
 
     for tile in tiles:
         window.blit(tile.image, tile)
-    
+
     for spike in spikes:
         window.blit(spike.image, spike)
 
@@ -530,14 +528,17 @@ def draw():
         window.blit(metall.image, metall)
         for bullet in metall.bullets:
             window.blit(bullet.image, bullet)
-    
+            
+    for bullet in metall_bullets:
+        window.blit(bullet.image, bullet)
+
     for blader in bladers:
         blader.update_image()
         window.blit(blader.image, blader)
 
     for item in items:
         window.blit(item.image, item)
-    
+
     for bullet in player.bullets:
         window.blit(bullet.image, bullet)
 
@@ -546,7 +547,7 @@ def draw():
     for i in range(player.max_health):
         x_pos = TILE_SIZE + i * HEALTH_WIDTH
         y_pos = TILE_SIZE
-        
+
         if i < player.health:
             # Teken vol blokje
             window.blit(health_image, (x_pos, y_pos))
@@ -559,6 +560,7 @@ def draw():
 #start game
 player = Player()
 metalls = []
+metall_bullets =[] #bullets for metall
 tiles = []
 background_tiles = []
 items = []
@@ -571,7 +573,7 @@ while True: #game loop
         if event.type == pygame.QUIT:
             pygame.quit()
             exit()
-        
+
         if event.type == INVINCIBLE_END:
             player.invincible = False
         elif event.type == SHOOTING_END:
@@ -591,7 +593,7 @@ while True: #game loop
         # player.velocity_x = PLAYER_VELOCITY_X
         move_player_x(-PLAYER_VELOCITY_X)
         player.direction = "right"
-    
+
     if keys[pygame.K_SPACE] or keys[pygame.K_f]:
         player.set_shooting()
 

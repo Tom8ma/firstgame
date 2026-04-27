@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.10" tiledversion="1.12.1" orientation="orthogonal" renderorder="right-down" width="16" height="16" tilewidth="128" tileheight="128" infinite="0" nextlayerid="2" nextobjectid="1">
+ <tileset firstgid="1" name="MAP" tilewidth="640" tileheight="560" tilecount="18" columns="0">
+  <grid orientation="orthogonal" width="1" height="1"/>
+  <tile id="0">
+   <image source="../My-Map/1.png" width="128" height="128"/>
+  </tile>
+  <tile id="1">
+   <image source="../My-Map/2.png" width="128" height="128"/>
+  </tile>
+  <tile id="2">
+   <image source="../My-Map/3.png" width="128" height="128"/>
+  </tile>
+  <tile id="3">
+   <image source="../My-Map/4.png" width="128" height="128"/>
+  </tile>
+  <tile id="4">
+   <image source="../My-Map/5.png" width="128" height="128"/>
+  </tile>
+  <tile id="5">
+   <image source="../My-Map/6.png" width="128" height="128"/>
+  </tile>
+  <tile id="6">
+   <image source="../My-Map/7.png" width="128" height="128"/>
+  </tile>
+  <tile id="7">
+   <image source="../My-Map/8.png" width="128" height="128"/>
+  </tile>
+  <tile id="8">
+   <image source="../My-Map/9.png" width="128" height="128"/>
+  </tile>
+  <tile id="9">
+   <image source="../My-Map/10.png" width="128" height="128"/>
+  </tile>
+  <tile id="10">
+   <image source="../My-Map/11.png" width="128" height="128"/>
+  </tile>
+  <tile id="11">
+   <image source="../My-Map/12.png" width="128" height="128"/>
+  </tile>
+  <tile id="12">
+   <image source="../My-Map/13.png" width="128" height="128"/>
+  </tile>
+  <tile id="13">
+   <image source="../My-Map/14.png" width="128" height="93"/>
+  </tile>
+  <tile id="14">
+   <image source="../My-Map/15.png" width="128" height="93"/>
+  </tile>
+  <tile id="15">
+   <image source="../My-Map/16.png" width="128" height="93"/>
+  </tile>
+  <tile id="16">
+   <image source="../My-Map/17.png" width="128" height="128"/>
+  </tile>
+  <tile id="17">
+   <image source="../My-Map/BG.png" width="640" height="560"/>
+  </tile>
+ </tileset>
+ <layer id="1" name="Tilelaag 1" width="16" height="16">
+  <data encoding="csv">
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+</data>
+ </layer>
+</map>
