@@ -124,11 +124,6 @@ window = pygame.display.set_mode((GAME_WIDTH, GAME_HEIGHT))
 pygame.display.set_caption("dino shooting game")
 pygame.display.set_icon(player_image_right)
 clock = pygame.time.Clock()
-pygame.font.init()
-game_font = pygame.font.Font("./PYGAME_TEXT1.ttf", 24)
-game_over = False
-
-
 
 #Custom event
 INVINCIBLE_END = pygame.USEREVENT + 0
@@ -160,7 +155,6 @@ class Player(pygame.Rect):
         self.health = self.max_health
         self.shooting = False
         self.bullets = []
-        self.score = 0
 
     def update_image(self):
         if self.jumping and self.shooting:
@@ -203,6 +197,7 @@ class Metall(pygame.Rect):
                 self.image = metall_image_bullet_left
                 self.velocity_x = -METALL_BULLET_VELOCITY_X
 
+
             elif metall.direction == "right":
                 pygame.Rect.__init__(self, metall.x + metall.width, metall.y + TILE_SIZE/2,
                                      METALL_BULLET_WIDTH, METALL_BULLET_HEIGHT)
@@ -233,6 +228,7 @@ class Metall(pygame.Rect):
                 self.image = metall_image_guard_left
             else:
                 self.image = metall_image_left
+
 
     def set_shooting(self):
         if abs(self.x - player.x) <= TILE_SIZE*4:
@@ -340,17 +336,6 @@ def create_map():
                 tiles.append(Tile(x, y, rock_tile_BARRIER_image))
 
 
-def reset_game():
-    player = Player()
-    metalls = []
-    metall_bullets =[] #bullets for metall
-    tiles = []
-    background_tiles = []
-    items = []
-    spikes = [] #traps, hazards
-    bladers = []
-    create_map()
-
 def check_tile_collision(character):
     for tile in tiles:
         if character.colliderect(tile):
@@ -415,7 +400,7 @@ def move_map_x(velocity_x):
         blader.x += velocity_x
 
 def move():
-    global metalls, items, bladers , metall_bullets , game_over
+    global metalls, items, bladers , metall_bullets
     #y movement
     player.velocity_y += GRAVITY
     player.y += player.velocity_y
@@ -436,28 +421,24 @@ def move():
                     if metall.health <= 0:
                         drop_item(metall)
                         metall_bullets += metall.bullets
-                        player.score += 500
                         
+        for bullet in metall_bullets:
+            bullet.x += bullet.velocity_x
+            bullet.y += bullet.velocity_y
+            if not player.invincible and player.colliderect(bullet):
+                player.health -= 2
+                bullet.used = True
+                player.set_invincible()
+
+        metall_bullets = [bullet for bullet in metall.bullets if not bullet.used \
+                          and bullet.x + bullet.width > 0 and bullet.x < GAME_WIDTH]
+
         for blader in bladers:
             if blader.health > 0 and not bullet.used and bullet.colliderect(blader):
                 bullet.used = True
                 blader.health -= 1
                 if blader.health <= 0:
                     drop_item(blader)
-                    player.score += 500
-
-    # Deze loop is uit de player.bullets loop gehaald en hernoemd naar m_bullet
-    for m_bullet in metall_bullets:
-        m_bullet.x += m_bullet.velocity_x
-        m_bullet.y += m_bullet.velocity_y
-        if not player.invincible and player.colliderect(m_bullet):
-            player.health -= 2
-            m_bullet.used = True
-            player.set_invincible()
-
-    # Lijst updaten met de juiste variabele naam (m_bullet)
-    metall_bullets = [m_bullet for m_bullet in metall_bullets if not m_bullet.used \
-                      and m_bullet.x + m_bullet.width > 0 and m_bullet.x < GAME_WIDTH]
 
     player.bullets = [bullet for bullet in player.bullets if not bullet.used \
                       and bullet.x + bullet.width > 0 and bullet.x < GAME_WIDTH]
@@ -511,9 +492,6 @@ def move():
             player.health -= 1
             player.set_invincible()
 
-    if player.health <= 0 or player.y > GAME_HEIGHT:
-        game_over = True
-
     for item in items:
         item.velocity_y += GRAVITY
         item.y += item.velocity_y
@@ -525,10 +503,6 @@ def move():
             elif item.image == big_life_energy_image:
                 player.health = min(player.health + 8, player.max_health)
     items = [item for item in items if not item.used]
-    
-    
-    
-    
 
 def draw():
     window.fill((187 , 221 , 254))
@@ -582,10 +556,6 @@ def draw():
             window.blit(health_empty_image, (x_pos, y_pos))
     for i in range(player.health):
         window.blit(health_image, (TILE_SIZE + i * HEALTH_WIDTH, TILE_SIZE))
-        
-    text_score = str(player.score)
-    text_surface = game_font.render(text_score, False, "black")
-    window.blit(text_surface, (GAME_WIDTH/2, TILE_SIZE/2))
 
 #start game
 player = Player()
@@ -610,10 +580,6 @@ while True: #game loop
             player.shooting = False
 
     keys = pygame.key.get_pressed()
-    if (keys[pygame.K_RETURN]) or keys[pygame.KSCAN_KP_ENTER] and game_over:
-        reset_game()
-        
-        
     if (keys[pygame.K_UP] or keys[pygame.K_z]) and not player.jumping:
         player.velocity_y = PLAYER_VELOCITY_Y
         player.jumping = True
@@ -631,8 +597,7 @@ while True: #game loop
     if keys[pygame.K_SPACE] or keys[pygame.K_f]:
         player.set_shooting()
 
-    if not game_over  :
-        move()
-        draw()
-        pygame.display.update()
-        clock.tick(60) #60 frames per second (fps)
+    move()
+    draw()
+    pygame.display.update()
+    clock.tick(60) #60 frames per second (fps)
