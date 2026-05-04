@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Naam Checker</title>
+    
+    <!-- Ingebouwde debugger om fouten makkelijk op te sporen -->
+    <script>
+        window.onerror = function(msg, url, line, col, error) {
+            alert("Er is een fout opgetreden!\n\nMelding: " + msg + "\nOp regel: " + line);
+            return false;
+        };
+    </script>
+
+    <style>
+        /* Basis en achtergrond */
+        body {
+            font-family: sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background: linear-gradient(135deg, #e0eafc, #cfdef3, #e0eafc);
+            background-size: 200% 200%;
+            animation: gradientBG 6s ease infinite;
+            overflow: hidden; /* Voorkomt scrollbars bij confetti en trillen */
+            transition: background 0.5s ease;
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Container met 3D effect */
+        .container-wrapper {
+            perspective: 1000px;
+        }
+
+        .container {
+            text-align: center;
+            background: white;
+            padding: 2.5rem 2rem;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            width: 320px;
+            transform-style: preserve-3d;
+            transition: transform 0.1s ease-out, box-shadow 0.1s ease-out;
+            animation: popIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @keyframes popIn {
+            0% { transform: scale(0.8) rotateX(10deg); opacity: 0; }
+            100% { transform: scale(1) rotateX(0deg); opacity: 1; }
+        }
+
+        /* Invoerveld */
+        input {
+            padding: 12px;
+            width: 80%;
+            margin-bottom: 20px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            transform: translateZ(20px); /* 3D pop-out */
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #007BFF;
+            box-shadow: 0 0 15px rgba(0, 123, 255, 0.4);
+            transform: translateZ(25px) scale(1.02);
+        }
+
+        /* Knop */
+        button {
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 6px rgba(0, 123, 255, 0.3);
+            transform: translateZ(30px); /* 3D pop-out */
+        }
+
+        button:hover {
+            background-color: #0056b3;
+            transform: translateZ(35px) translateY(-2px);
+            box-shadow: 0 8px 15px rgba(0, 123, 255, 0.4);
+        }
+
+        button:active {
+            transform: translateZ(25px) translateY(1px);
+        }
+
+        button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+            transform: translateZ(10px);
+            box-shadow: none;
+        }
+
+        /* Antwoord tekst */
+        #antwoord {
+            margin-top: 25px;
+            font-weight: bold;
+            font-size: 18px;
+            color: #333;
+            min-height: 3em;
+            display: block;
+            transform: translateZ(20px);
+        }
+
+        /* --- NIEUWE FEATURES --- */
+
+        /* Vibe Meter */
+        .vibe-box {
+            margin-top: 20px;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            transform: translateZ(15px);
+        }
+
+        .vibe-label {
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #555;
+        }
+
+        .vibe-bar {
+            width: 100%;
+            height: 15px;
+            background: #eee;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid #ccc;
+        }
+
+        .vibe-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #ff4e50, #f9d423, #00c9ff, #92fe9d);
+            background-size: 300% 100%;
+            transition: width 1.5s cubic-bezier(0.25, 0.8, 0.25, 1);
+            animation: vibeShimmer 3s infinite linear;
+        }
+
+        @keyframes vibeShimmer {
+            0% { background-position: 100% 0; }
+            100% { background-position: 0 0; }
+        }
+
+        /* Volledig Scherm Trillen */
+        body.mega-shake {
+            animation: megaShake 0.4s ease-in-out infinite;
+        }
+        @keyframes megaShake {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            25% { transform: translate(-5px, 5px) rotate(-1deg); }
+            50% { transform: translate(5px, -5px) rotate(1deg); }
+            75% { transform: translate(-5px, -5px) rotate(-1deg); }
+        }
+
+        /* Hacker Mode Easter Egg */
+        body.hacker-mode {
+            background: #000;
+        }
+        .container.hacker-mode-container {
+            background: #111;
+            box-shadow: 0 0 20px #0f0;
+            border: 1px solid #0f0;
+        }
+        .hacker-text {
+            color: #0f0 !important;
+            font-family: 'Courier New', Courier, monospace;
+            text-shadow: 0 0 5px #0f0;
+        }
+
+        /* Confetti sterren */
+        .star {
+            position: absolute;
+            top: -20px;
+            font-size: 24px;
+            animation: fall 3s linear forwards;
+            pointer-events: none;
+            z-index: 999;
+        }
+        @keyframes fall {
+            to { transform: translateY(110vh) rotate(360deg); opacity: 0; }
+        }
+
+        /* Specifieke tekst effecten */
+        .anim-shake {
+            color: #d9534f !important;
+        }
+        .anim-glow {
+            color: #d4af37 !important;
+            text-shadow: 0 0 8px rgba(212, 175, 55, 0.6), 0 0 16px rgba(212, 175, 55, 0.4);
+            animation: pulseGlow 1.5s infinite alternate ease-in-out;
+        }
+        @keyframes pulseGlow {
+            from { transform: scale(1); text-shadow: 0 0 8px rgba(212, 175, 55, 0.6); }
+            to { transform: scale(1.05); text-shadow: 0 0 15px rgba(212, 175, 55, 1), 0 0 30px rgba(212, 175, 55, 0.8); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container-wrapper">
+        <div class="container" id="mainCard">
+            <h1 id="titleText">Is deze persoon leuk?</h1>
+            
+            <input type="text" id="naamInput" placeholder="Typ een naam...">
+            <br>
+            <button id="checkKnop" onclick="checkNaam()">Check het!</button>
+            
+            <p id="antwoord"></p>
+
+            <div class="vibe-box" id="vibeBox">
+                <div class="vibe-label" id="vibeLabel">Vibe Meter: 0%</div>
+                <div class="vibe-bar">
+                    <div class="vibe-fill" id="vibeFill"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 1. 3D Kantel effect voor de container
+        const card = document.getElementById('mainCard');
+        document.addEventListener('mousemove', (e) => {
+            const xAxis = (window.innerWidth / 2 - e.pageX) / 25;
+            const yAxis = (window.innerHeight / 2 - e.pageY) / 25;
+            card.style.transform = `rotateY(${xAxis}deg) rotateX(${yAxis}deg)`;
+        });
+        
+        // Reset 3D kanteling als de muis het scherm verlaat
+        document.addEventListener('mouseleave', () => {
+            card.style.transform = `rotateY(0deg) rotateX(0deg)`;
+        });
+
+        // 2. Typemachine functie
+        let typTimeout;
+        function typeWriter(text, element, speed = 40) {
+            element.innerHTML = "";
+            let i = 0;
+            function type() {
+                if (i < text.length) {
+                    element.innerHTML += text.charAt(i);
+                    i++;
+                    typTimeout = setTimeout(type, speed);
+                }
+            }
+            type();
+        }
+
+        // 3. Confetti genereren
+        function gooiSterren() {
+            for (let i = 0; i < 50; i++) {
+                setTimeout(() => {
+                    const star = document.createElement("div");
+                    star.innerHTML = "⭐";
+                    star.className = "star";
+                    star.style.left = Math.random() * 100 + "vw";
+                    star.style.fontSize = Math.random() * 20 + 10 + "px";
+                    star.style.animationDuration = Math.random() * 2 + 2 + "s";
+                    document.body.appendChild(star);
+                    
+                    // Ruim de sterren weer op
+                    setTimeout(() => star.remove(), 3000);
+                }, i * 50); // Beetje bij beetje droppen
+            }
+        }
+
+        // Hoofdfunctie
+        function checkNaam() {
+            const origineleNaam = document.getElementById('naamInput').value.trim();
+            const naamKleineLetters = origineleNaam.toLowerCase();
+            const antwoordVeld = document.getElementById('antwoord');
+            const knop = document.getElementById('checkKnop');
+            const vibeBox = document.getElementById('vibeBox');
+            const vibeFill = document.getElementById('vibeFill');
+            const vibeLabel = document.getElementById('vibeLabel');
+            const titleText = document.getElementById('titleText');
+
+            // Reset alles van vorige beurten
+            clearTimeout(typTimeout);
+            document.body.className = "";
+            card.className = "container";
+            antwoordVeld.className = "";
+            titleText.className = "";
+            vibeBox.style.opacity = "0";
+            vibeFill.style.width = "0%";
+            vibeLabel.innerText = "Vibe Meter: 0%";
+
+            if (origineleNaam === "") {
+                antwoordVeld.innerHTML = "Vul eerst een naam in!";
+                antwoordVeld.classList.add("anim-shake");
+                return;
+            }
+
+            // Easter Egg: ICT Mode
+            if (naamKleineLetters === "ict") {
+                document.body.classList.add("hacker-mode");
+                card.classList.add("hacker-mode-container");
+                antwoordVeld.classList.add("hacker-text");
+                titleText.classList.add("hacker-text");
+                titleText.innerText = "SYSTEM ACCESS GRANTED";
+                typeWriter("Welkom terug in de terminal. Industriële netwerken zijn veilig gesteld. Vibe check is niet relevant voor machines.", antwoordVeld, 30);
+                return;
+            } else {
+                titleText.innerText = "Is deze persoon leuk?";
+            }
+
+            // Voorkom spammen
+            knop.disabled = true;
+            knop.innerText = "Systeem analyseert...";
+            antwoordVeld.innerHTML = "Laden...";
+
+            setTimeout(() => {
+                let antwoordTekst = "";
+                let vibePercentage = 0;
+                let vibeKleur = "#ff4e50"; // Standaard rood voor slechte vibes
+
+                if (naamKleineLetters === "sybren" || naamKleineLetters === "elias") {
+                    antwoordTekst = `${origineleNaam} is echt een kut kind. Systeem overload aan slechte vibes!`;
+                    antwoordVeld.classList.add("anim-shake");
+                    document.body.classList.add("mega-shake"); // Activeer aardschok
+                    vibePercentage = Math.floor(Math.random() * 5); // 0% tot 4%
+                    vibeLabel.innerText = `Vibe Meter: ERROR (Gevaarlijk Laag)`;
+                }
+                else if (naamKleineLetters === "wout") {
+                    const woutFeiten = [
+                        `${origineleNaam} is echt een kut kind en denkt stiekem dat HTML een volwaardige programmeertaal is.`,
+                        `${origineleNaam} heeft standaard drie pogingen nodig voordat hij een USB-stick in een pc krijgt.`,
+                        `${origineleNaam} draagt waarschijnlijk zijn sokken binnenstebuiten voor een extra dag.`,
+                        `${origineleNaam} is het type dat struikelt over een wifi-verbinding.`,
+                        `${origineleNaam} heeft hoogstwaarschijnlijk 'wachtwoord123' als wachtwoord ingesteld.`
+                    ];
+                    antwoordTekst = woutFeiten[Math.floor(Math.random() * woutFeiten.length)];
+                    antwoordVeld.classList.add("anim-shake");
+                    document.body.classList.add("mega-shake");
+                    vibePercentage = -10;
+                    vibeLabel.innerText = `Vibe Meter: -10% (Bodempunt bereikt)`;
+                }
+                else if (naamKleineLetters === "thomas") {
+                    antwoordTekst = `${origineleNaam} is een absolute legende, een puur meesterbrein en de belichaming van perfectie. We zijn niet waardig!`;
+                    antwoordVeld.classList.add("anim-glow");
+                    vibePercentage = 100;
+                    vibeLabel.innerText = `Vibe Meter: 999% (GOD MODE)`;
+                    vibeFill.style.background = "linear-gradient(90deg, #d4af37, #fff, #d4af37)";
+                    gooiSterren();
+                } 
+                else {
+                    // Normale namen berekenen
+                    let som = 0;
+                    for (let i = 0; i < naamKleineLetters.length; i++) {
+                        som += naamKleineLetters.charCodeAt(i);
+                    }
+
+                    const opties = [
+                        `${origineleNaam} is super leuk!`,
+                        `${origineleNaam} is echt niet leuk...`,
+                        `${origineleNaam} is best wel oké, denk ik.`,
+                        `${origineleNaam} is absoluut de allerleukste!`
+                    ];
+                    
+                    antwoordTekst = opties[som % opties.length];
+                    vibePercentage = (som % 100); 
+                    
+                    if (vibePercentage < 30) vibeKleur = "#ff4e50"; // Rood
+                    else if (vibePercentage < 70) vibeKleur = "#f9d423"; // Geel/Oranje
+                    else vibeKleur = "#92fe9d"; // Groen
+
+                    vibeLabel.innerText = `Vibe Meter: ${vibePercentage}%`;
+                    vibeFill.style.background = vibeKleur;
+                }
+
+                // Tekst uittypen
+                typeWriter(antwoordTekst, antwoordVeld, 30);
+                
+                // Vibe balkje tonen en vullen
+                vibeBox.style.opacity = "1";
+                setTimeout(() => {
+                    vibeFill.style.width = vibePercentage < 0 ? "0%" : `${vibePercentage}%`;
+                }, 300);
+
+                // Zet de knop weer aan
+                setTimeout(() => {
+                    knop.disabled = false;
+                    knop.innerText = "Check het!";
+                    // Zet de aardschok na 2 seconden weer uit
+                    document.body.classList.remove("mega-shake"); 
+                }, 2000); 
+
+            }, 800); // 0.8 seconden 'laden'
+        }
+    </script>
+
+</body>
+</html>

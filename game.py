@@ -22,6 +22,11 @@ PLAYER_JUMP_HEIGHT = 63
 PLAYER_SHOOT_WIDTH = 60 #same height as PLAYER_HEIGHT
 PLAYER_JUMP_SHOOT_WIDTH = 63 #same height as PLAYER_JUMP_HEIGHT
 PLAYER_DISTANCE = 5
+PLAYER_WALK_WIDTH = 48
+PLAYER_WALK_HEIGHT = 48
+PLAYER_WALK_SHOOT_WIDTH = 67
+
+
 
 GRAVITY = 0.5
 FRICTION = 0.4
@@ -78,6 +83,22 @@ player_image_jump_shoot_left = load_image("jumpshoot l.png",
                                           (PLAYER_JUMP_SHOOT_WIDTH, PLAYER_JUMP_HEIGHT))
 player_image_bullet = load_image("image.png", (PLAYER_BULLET_WIDTH, PLAYER_BULLET_HEIGHT))
 
+# player_image_walk_right = [load_image(f"dino-right-walk{i}.png"
+#                                      (PLAYER_WALK_WIDTH , PLAYER_WALK_HEIGHT)) for i in range(4)]
+
+# player_image_walk_left = [load_image(f"dino-left-walk{i}.png"
+#                                      (PLAYER_WALK_WIDTH , PLAYER_WALK_HEIGHT)) for i in range(4)]
+
+# player_image_walk_shoot_right =[load_image(f"dino-right-walk-shoot{i}.png"
+#                                      (PLAYER_WALK_WIDTH , PLAYER_WALK_HEIGHT)) for i in range(4)]
+
+# player_image_walk_shoot_left =[load_image(f"dino-left-walk-shoot{i}.png"
+#                                      (PLAYER_WALK_SHOOT_WIDTH , PLAYER_WALK_HEIGHT)) for i in range(4)]
+
+
+
+
+
 floor_tile_image = load_image("2.png", (TILE_SIZE, TILE_SIZE))
 wall_tile_image = load_image("4.png", (TILE_SIZE, TILE_SIZE))
 beam_tile_image = load_image("crate.png", (TILE_SIZE, TILE_SIZE))
@@ -126,6 +147,7 @@ pygame.display.set_icon(player_image_right)
 clock = pygame.time.Clock()
 pygame.font.init()
 game_font = pygame.font.Font("./PYGAME_TEXT1.ttf", 24)
+game_over_font = pygame.font.Font("./OpenSans-VariableFont_wdth,wght.ttf", 35)
 game_over = False
 
 
@@ -341,6 +363,8 @@ def create_map():
 
 
 def reset_game():
+    global player , metalls , metall_bullets , tiles, background_tiles , \
+        items, spikes , bladers, game_over
     player = Player()
     metalls = []
     metall_bullets =[] #bullets for metall
@@ -350,6 +374,7 @@ def reset_game():
     spikes = [] #traps, hazards
     bladers = []
     create_map()
+    game_over = False
 
 def check_tile_collision(character):
     for tile in tiles:
@@ -586,6 +611,14 @@ def draw():
     text_score = str(player.score)
     text_surface = game_font.render(text_score, False, "black")
     window.blit(text_surface, (GAME_WIDTH/2, TILE_SIZE/2))
+    
+    if game_over:
+        text_surface = game_over_font.render("GAME OVER", False, "black")
+        window.blit(text_surface, (GAME_WIDTH/8, GAME_HEIGHT/2))
+        text_surface = game_over_font.render("PRESS ENTER", False, "black")
+        window.blit(text_surface, (GAME_WIDTH/8, GAME_HEIGHT/2 + TILE_SIZE))
+
+
 
 #start game
 player = Player()
