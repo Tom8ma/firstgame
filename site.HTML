@@ -14,7 +14,7 @@
     </script>
 
     <style>
-        /* Basis en achtergrond */
+        /* Basis en achtergrond - trager en vloeiender gemaakt */
         body {
             font-family: sans-serif;
             display: flex;
@@ -24,9 +24,9 @@
             margin: 0;
             background: linear-gradient(135deg, #e0eafc, #cfdef3, #e0eafc);
             background-size: 200% 200%;
-            animation: gradientBG 6s ease infinite;
-            overflow: hidden; /* Voorkomt scrollbars bij confetti en trillen */
-            transition: background 0.5s ease;
+            animation: gradientBG 10s ease-in-out infinite;
+            overflow: hidden; 
+            transition: background 0.8s ease-in-out;
         }
 
         @keyframes gradientBG {
@@ -35,7 +35,7 @@
             100% { background-position: 0% 50%; }
         }
 
-        /* Container met 3D effect */
+        /* Container met verbeterd 3D effect en hardware acceleratie */
         .container-wrapper {
             perspective: 1000px;
         }
@@ -48,16 +48,18 @@
             box-shadow: 0 10px 30px rgba(0,0,0,0.15);
             width: 320px;
             transform-style: preserve-3d;
-            transition: transform 0.1s ease-out, box-shadow 0.1s ease-out;
-            animation: popIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            /* Basis overgang, wordt door JS overschreven voor super smooth effect */
+            transition: transform 0.1s ease-out, box-shadow 0.3s ease-in-out, background-color 0.4s ease;
+            animation: popIn 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            will-change: transform;
         }
 
         @keyframes popIn {
-            0% { transform: scale(0.8) rotateX(10deg); opacity: 0; }
+            0% { transform: scale(0.8) rotateX(15deg); opacity: 0; }
             100% { transform: scale(1) rotateX(0deg); opacity: 1; }
         }
 
-        /* Invoerveld */
+        /* Invoerveld vloeiender gemaakt */
         input {
             padding: 12px;
             width: 80%;
@@ -65,18 +67,19 @@
             border: 2px solid #ddd;
             border-radius: 8px;
             font-size: 16px;
-            transition: all 0.3s ease;
-            transform: translateZ(20px); /* 3D pop-out */
+            transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+            transform: translateZ(20px); 
+            will-change: transform, box-shadow;
         }
 
         input:focus {
             outline: none;
             border-color: #007BFF;
-            box-shadow: 0 0 15px rgba(0, 123, 255, 0.4);
-            transform: translateZ(25px) scale(1.02);
+            box-shadow: 0 0 20px rgba(0, 123, 255, 0.3);
+            transform: translateZ(30px) scale(1.03);
         }
 
-        /* Knop */
+        /* Knop met zachtere schaduwen */
         button {
             background-color: #007BFF;
             color: white;
@@ -86,19 +89,21 @@
             font-weight: bold;
             border-radius: 8px;
             cursor: pointer;
-            transition: all 0.2s ease;
-            box-shadow: 0 4px 6px rgba(0, 123, 255, 0.3);
-            transform: translateZ(30px); /* 3D pop-out */
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            box-shadow: 0 4px 10px rgba(0, 123, 255, 0.3);
+            transform: translateZ(30px); 
+            will-change: transform, box-shadow;
         }
 
         button:hover {
             background-color: #0056b3;
-            transform: translateZ(35px) translateY(-2px);
-            box-shadow: 0 8px 15px rgba(0, 123, 255, 0.4);
+            transform: translateZ(40px) translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0, 123, 255, 0.4);
         }
 
         button:active {
-            transform: translateZ(25px) translateY(1px);
+            transform: translateZ(25px) translateY(2px);
+            box-shadow: 0 2px 5px rgba(0, 123, 255, 0.3);
         }
 
         button:disabled {
@@ -114,19 +119,25 @@
             font-weight: bold;
             font-size: 18px;
             color: #333;
-            min-height: 3em;
+            min-height: 4em;
             display: block;
             transform: translateZ(20px);
+            transition: color 0.4s ease;
         }
 
         /* --- NIEUWE FEATURES --- */
 
-        /* Vibe Meter */
+        /* Vibe Meter zachter inladen */
         .vibe-box {
             margin-top: 20px;
             opacity: 0;
-            transition: opacity 0.5s ease;
-            transform: translateZ(15px);
+            transition: opacity 0.8s ease-in-out, transform 0.6s ease;
+            transform: translateZ(15px) translateY(10px);
+        }
+
+        .vibe-box.show {
+            opacity: 1;
+            transform: translateZ(15px) translateY(0);
         }
 
         .vibe-label {
@@ -134,6 +145,7 @@
             font-weight: bold;
             margin-bottom: 5px;
             color: #555;
+            transition: color 0.4s ease;
         }
 
         .vibe-bar {
@@ -143,6 +155,7 @@
             border-radius: 10px;
             overflow: hidden;
             border: 1px solid #ccc;
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.05);
         }
 
         .vibe-fill {
@@ -150,8 +163,8 @@
             width: 0%;
             background: linear-gradient(90deg, #ff4e50, #f9d423, #00c9ff, #92fe9d);
             background-size: 300% 100%;
-            transition: width 1.5s cubic-bezier(0.25, 0.8, 0.25, 1);
-            animation: vibeShimmer 3s infinite linear;
+            transition: width 2s cubic-bezier(0.22, 1, 0.36, 1); /* Super vloeiende balk */
+            animation: vibeShimmer 4s infinite linear;
         }
 
         @keyframes vibeShimmer {
@@ -159,38 +172,38 @@
             100% { background-position: 0 0; }
         }
 
-        /* Volledig Scherm Trillen */
+        /* Volledig Scherm Trillen - Vloeiendere golfbeweging */
         body.mega-shake {
-            animation: megaShake 0.4s ease-in-out infinite;
+            animation: megaShake 0.5s cubic-bezier(0.36, 0.07, 0.19, 0.97) infinite;
         }
         @keyframes megaShake {
             0%, 100% { transform: translate(0, 0) rotate(0deg); }
-            25% { transform: translate(-5px, 5px) rotate(-1deg); }
-            50% { transform: translate(5px, -5px) rotate(1deg); }
-            75% { transform: translate(-5px, -5px) rotate(-1deg); }
+            25% { transform: translate(-3px, 3px) rotate(-0.5deg); }
+            50% { transform: translate(3px, -3px) rotate(0.5deg); }
+            75% { transform: translate(-3px, -3px) rotate(-0.5deg); }
         }
 
         /* Hacker Mode Easter Egg */
         body.hacker-mode {
-            background: #000;
+            background: #050505;
         }
         .container.hacker-mode-container {
             background: #111;
-            box-shadow: 0 0 20px #0f0;
+            box-shadow: 0 0 30px rgba(0, 255, 0, 0.4);
             border: 1px solid #0f0;
         }
         .hacker-text {
             color: #0f0 !important;
             font-family: 'Courier New', Courier, monospace;
-            text-shadow: 0 0 5px #0f0;
+            text-shadow: 0 0 8px #0f0;
         }
 
-        /* Confetti sterren */
+        /* Confetti sterren - zachtere val */
         .star {
             position: absolute;
             top: -20px;
             font-size: 24px;
-            animation: fall 3s linear forwards;
+            animation: fall 4s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
             pointer-events: none;
             z-index: 999;
         }
@@ -205,11 +218,11 @@
         .anim-glow {
             color: #d4af37 !important;
             text-shadow: 0 0 8px rgba(212, 175, 55, 0.6), 0 0 16px rgba(212, 175, 55, 0.4);
-            animation: pulseGlow 1.5s infinite alternate ease-in-out;
+            animation: pulseGlow 2s infinite alternate ease-in-out;
         }
         @keyframes pulseGlow {
-            from { transform: scale(1); text-shadow: 0 0 8px rgba(212, 175, 55, 0.6); }
-            to { transform: scale(1.05); text-shadow: 0 0 15px rgba(212, 175, 55, 1), 0 0 30px rgba(212, 175, 55, 0.8); }
+            from { transform: scale(1); text-shadow: 0 0 10px rgba(212, 175, 55, 0.5); }
+            to { transform: scale(1.03); text-shadow: 0 0 20px rgba(212, 175, 55, 0.9), 0 0 40px rgba(212, 175, 55, 0.6); }
         }
     </style>
 </head>
@@ -217,7 +230,7 @@
 
     <div class="container-wrapper">
         <div class="container" id="mainCard">
-            <h1 id="titleText">Is deze persoon leuk?</h1>
+            <h1 id="titleText" style="transition: color 0.4s ease;">Is deze persoon leuk?</h1>
             
             <input type="text" id="naamInput" placeholder="Typ een naam...">
             <br>
@@ -235,22 +248,26 @@
     </div>
 
     <script>
-        // 1. 3D Kantel effect voor de container
+        // 1. VLOEIEND 3D Kantel effect voor de container
         const card = document.getElementById('mainCard');
+        
         document.addEventListener('mousemove', (e) => {
-            const xAxis = (window.innerWidth / 2 - e.pageX) / 25;
-            const yAxis = (window.innerHeight / 2 - e.pageY) / 25;
+            // Snelle, vloeiende reactie tijdens het bewegen
+            card.style.transition = 'transform 0.1s ease-out'; 
+            const xAxis = (window.innerWidth / 2 - e.pageX) / 30; // Iets subtielere hoek (/30 ipv /25)
+            const yAxis = (window.innerHeight / 2 - e.pageY) / 30;
             card.style.transform = `rotateY(${xAxis}deg) rotateX(${yAxis}deg)`;
         });
         
-        // Reset 3D kanteling als de muis het scherm verlaat
+        // Glijd boterzacht terug naar het midden als de muis weggaat
         document.addEventListener('mouseleave', () => {
+            card.style.transition = 'transform 0.8s cubic-bezier(0.25, 0.8, 0.25, 1)';
             card.style.transform = `rotateY(0deg) rotateX(0deg)`;
         });
 
-        // 2. Typemachine functie
+        // 2. Vloeiendere Typemachine functie
         let typTimeout;
-        function typeWriter(text, element, speed = 40) {
+        function typeWriter(text, element, speed = 35) {
             element.innerHTML = "";
             let i = 0;
             function type() {
@@ -265,19 +282,18 @@
 
         // 3. Confetti genereren
         function gooiSterren() {
-            for (let i = 0; i < 50; i++) {
+            for (let i = 0; i < 60; i++) {
                 setTimeout(() => {
                     const star = document.createElement("div");
                     star.innerHTML = "⭐";
                     star.className = "star";
                     star.style.left = Math.random() * 100 + "vw";
                     star.style.fontSize = Math.random() * 20 + 10 + "px";
-                    star.style.animationDuration = Math.random() * 2 + 2 + "s";
+                    star.style.animationDuration = Math.random() * 3 + 2 + "s"; // Iets tragere val
                     document.body.appendChild(star);
                     
-                    // Ruim de sterren weer op
-                    setTimeout(() => star.remove(), 3000);
-                }, i * 50); // Beetje bij beetje droppen
+                    setTimeout(() => star.remove(), 5000); // Netjes opruimen
+                }, i * 40); 
             }
         }
 
@@ -292,19 +308,21 @@
             const vibeLabel = document.getElementById('vibeLabel');
             const titleText = document.getElementById('titleText');
 
-            // Reset alles van vorige beurten
+            // Reset alles van vorige beurten vloeiend
             clearTimeout(typTimeout);
             document.body.className = "";
             card.className = "container";
             antwoordVeld.className = "";
             titleText.className = "";
-            vibeBox.style.opacity = "0";
+            vibeBox.classList.remove('show');
             vibeFill.style.width = "0%";
             vibeLabel.innerText = "Vibe Meter: 0%";
 
             if (origineleNaam === "") {
-                antwoordVeld.innerHTML = "Vul eerst een naam in!";
-                antwoordVeld.classList.add("anim-shake");
+                setTimeout(() => {
+                    antwoordVeld.innerHTML = "Vul eerst een naam in!";
+                    antwoordVeld.classList.add("anim-shake");
+                }, 200); // Korte delay zodat de reset effectief is
                 return;
             }
 
@@ -321,7 +339,7 @@
                 titleText.innerText = "Is deze persoon leuk?";
             }
 
-            // Voorkom spammen
+            // Voorkom spammen en start laden
             knop.disabled = true;
             knop.innerText = "Systeem analyseert...";
             antwoordVeld.innerHTML = "Laden...";
@@ -329,13 +347,13 @@
             setTimeout(() => {
                 let antwoordTekst = "";
                 let vibePercentage = 0;
-                let vibeKleur = "#ff4e50"; // Standaard rood voor slechte vibes
+                let vibeKleur = "#ff4e50"; 
 
                 if (naamKleineLetters === "sybren" || naamKleineLetters === "elias") {
                     antwoordTekst = `${origineleNaam} is echt een kut kind. Systeem overload aan slechte vibes!`;
                     antwoordVeld.classList.add("anim-shake");
-                    document.body.classList.add("mega-shake"); // Activeer aardschok
-                    vibePercentage = Math.floor(Math.random() * 5); // 0% tot 4%
+                    document.body.classList.add("mega-shake"); 
+                    vibePercentage = Math.floor(Math.random() * 5); 
                     vibeLabel.innerText = `Vibe Meter: ERROR (Gevaarlijk Laag)`;
                 }
                 else if (naamKleineLetters === "wout") {
@@ -361,7 +379,6 @@
                     gooiSterren();
                 } 
                 else {
-                    // Normale namen berekenen
                     let som = 0;
                     for (let i = 0; i < naamKleineLetters.length; i++) {
                         som += naamKleineLetters.charCodeAt(i);
@@ -377,32 +394,33 @@
                     antwoordTekst = opties[som % opties.length];
                     vibePercentage = (som % 100); 
                     
-                    if (vibePercentage < 30) vibeKleur = "#ff4e50"; // Rood
-                    else if (vibePercentage < 70) vibeKleur = "#f9d423"; // Geel/Oranje
-                    else vibeKleur = "#92fe9d"; // Groen
+                    if (vibePercentage < 30) vibeKleur = "#ff4e50"; 
+                    else if (vibePercentage < 70) vibeKleur = "#f9d423"; 
+                    else vibeKleur = "#92fe9d"; 
 
                     vibeLabel.innerText = `Vibe Meter: ${vibePercentage}%`;
                     vibeFill.style.background = vibeKleur;
                 }
 
-                // Tekst uittypen
+                // Tekst typen
                 typeWriter(antwoordTekst, antwoordVeld, 30);
                 
-                // Vibe balkje tonen en vullen
-                vibeBox.style.opacity = "1";
+                // Vibe balkje in beeld laten faden via class 'show'
+                vibeBox.classList.add('show');
+                
+                // Met een extra korte delay de balk vloeiend vullen
                 setTimeout(() => {
                     vibeFill.style.width = vibePercentage < 0 ? "0%" : `${vibePercentage}%`;
-                }, 300);
+                }, 400);
 
                 // Zet de knop weer aan
                 setTimeout(() => {
                     knop.disabled = false;
                     knop.innerText = "Check het!";
-                    // Zet de aardschok na 2 seconden weer uit
                     document.body.classList.remove("mega-shake"); 
-                }, 2000); 
+                }, 2200); 
 
-            }, 800); // 0.8 seconden 'laden'
+            }, 800); 
         }
     </script>
 

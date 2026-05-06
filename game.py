@@ -22,8 +22,8 @@ PLAYER_JUMP_HEIGHT = 63
 PLAYER_SHOOT_WIDTH = 60 #same height as PLAYER_HEIGHT
 PLAYER_JUMP_SHOOT_WIDTH = 63 #same height as PLAYER_JUMP_HEIGHT
 PLAYER_DISTANCE = 5
-PLAYER_WALK_WIDTH = 48
-PLAYER_WALK_HEIGHT = 48
+PLAYER_WALK_WIDTH = 60
+PLAYER_WALK_HEIGHT = 63
 PLAYER_WALK_SHOOT_WIDTH = 67
 
 
@@ -83,17 +83,29 @@ player_image_jump_shoot_left = load_image("jumpshoot l.png",
                                           (PLAYER_JUMP_SHOOT_WIDTH, PLAYER_JUMP_HEIGHT))
 player_image_bullet = load_image("image.png", (PLAYER_BULLET_WIDTH, PLAYER_BULLET_HEIGHT))
 
-# player_image_walk_right = [load_image(f"dino-right-walk{i}.png"
-#                                      (PLAYER_WALK_WIDTH , PLAYER_WALK_HEIGHT)) for i in range(4)]
 
-# player_image_walk_left = [load_image(f"dino-left-walk{i}.png"
-#                                      (PLAYER_WALK_WIDTH , PLAYER_WALK_HEIGHT)) for i in range(4)]
+player_image_walk_right = [
+    load_image(f"dino-right-walk{i}.png", (PLAYER_WALK_WIDTH, PLAYER_WALK_HEIGHT)) 
+    for i in range(4)
+]
 
-# player_image_walk_shoot_right =[load_image(f"dino-right-walk-shoot{i}.png"
-#                                      (PLAYER_WALK_WIDTH , PLAYER_WALK_HEIGHT)) for i in range(4)]
+# De normale loop-animatie naar LINKS (4 frames: 0-3)
+player_image_walk_left = [
+    load_image(f"dino-left-walk{i}.png", (PLAYER_WALK_WIDTH, PLAYER_WALK_HEIGHT)) 
+    for i in range(4)
+]
 
-# player_image_walk_shoot_left =[load_image(f"dino-left-walk-shoot{i}.png"
-#                                      (PLAYER_WALK_SHOOT_WIDTH , PLAYER_WALK_HEIGHT)) for i in range(4)]
+# De SCHIET-en-loop animatie naar RECHTS (4 frames: 0-3)
+player_image_walk_shoot_right = [
+    load_image(f"dino-right-walk-shoot{i}.png", (PLAYER_WALK_WIDTH, PLAYER_WALK_HEIGHT)) 
+    for i in range(4)
+]
+
+# De SCHIET-en-loop animatie naar LINKS (4 frames: 0-3)
+player_image_walk_shoot_left = [
+    load_image(f"dino-left-walk-shoot{i}.png", (PLAYER_WALK_WIDTH, PLAYER_WALK_HEIGHT)) 
+    for i in range(4)
+]
 
 
 
@@ -140,7 +152,7 @@ spike_images = [
     load_image("Cactus (3).png", (TILE_SIZE, TILE_SIZE * 1.5))
 ]
 
-pygame.init()
+pygame.init() #START GAME
 window = pygame.display.set_mode((GAME_WIDTH, GAME_HEIGHT))
 pygame.display.set_caption("dino shooting game")
 pygame.display.set_icon(player_image_right)
@@ -149,6 +161,7 @@ pygame.font.init()
 game_font = pygame.font.Font("./PYGAME_TEXT1.ttf", 24)
 game_over_font = pygame.font.Font("./OpenSans-VariableFont_wdth,wght.ttf", 35)
 game_over = False
+show_start_screen = True 
 
 
 
@@ -183,29 +196,56 @@ class Player(pygame.Rect):
         self.shooting = False
         self.bullets = []
         self.score = 0
+        self.walking = False
+        self.current_walk_index = 0
+        self.last_updated_walk_index = pygame.time.get_ticks()
 
     def update_image(self):
-        if self.jumping and self.shooting:
-            if self.direction == "right":
-                self.image = player_image_jump_shoot_right
-            elif self.direction == "left":
-                self.image = player_image_jump_shoot_left
-        elif self.shooting:
-            if self.direction == "right":
-                self.image = player_image_shoot_right
-            elif self.direction == "left":
-                self.image = player_image_shoot_left
-        elif self.jumping:
-            if self.direction == "right":
-                self.image = player_image_jump_right
-            elif self.direction == "left":
-                self.image = player_image_jump_left
+        if self.walking and not self.jumping:
+            if self.shooting:
+                if self.direction == "right":
+                    self.image = player_image_walk_shoot_right[self.current_walk_index]
+                elif self.direction == "left":
+                    self.image = player_image_walk_shoot_left[self.current_walk_index]
+            else:
+                if self.direction == "right":
+                    self.image = player_image_walk_right[self.current_walk_index]
+                elif self.direction == "left":
+                    self.image = player_image_walk_left[self.current_walk_index]
+            self.update_walking_animation()
+        
+        
+        
         else:
-            if self.direction == "right":
-                self.image = player_image_right
-            elif self.direction == "left":
-                self.image = player_image_left
+            self.current_walk_index = 0
+        
+            if self.jumping and self.shooting:
+                if self.direction == "right":
+                    self.image = player_image_jump_shoot_right
+                elif self.direction == "left":
+                    self.image = player_image_jump_shoot_left
+            elif self.shooting:
+                if self.direction == "right":
+                    self.image = player_image_shoot_right
+                elif self.direction == "left":
+                    self.image = player_image_shoot_left
+            elif self.jumping:
+                if self.direction == "right":
+                    self.image = player_image_jump_right
+                elif self.direction == "left":
+                    self.image = player_image_jump_left
+            else:
+                if self.direction == "right":
+                    self.image = player_image_right
+                elif self.direction == "left":
+                    self.image = player_image_left
 
+    def update_walking_animation(self):
+        NOW = pygame.time.get_ticks()
+        if NOW - self.last_updated_walk_index > 250:
+            self.last_updated_walk_index = NOW
+            self.current_walk_index = (self.current_walk_index + 1) % len(player_image_walk_right)
+        
     def set_invincible(self, milliseconds=1000):
         self.invincible = True
         pygame.time.set_timer(INVINCIBLE_END, milliseconds, 1) #event called, milliseconds, repetitions
@@ -546,9 +586,9 @@ def move():
         if player.colliderect(item):
             item.used = True
             if item.image == life_energy_image:
-                player.health = min(player.health + 2, player.max_health)
+                player.health = min(player.health + 10, player.max_health)
             elif item.image == big_life_energy_image:
-                player.health = min(player.health + 8, player.max_health)
+                player.health = min(player.health + 10, player.max_health)
     items = [item for item in items if not item.used]
     
     
@@ -594,16 +634,16 @@ def draw():
         window.blit(bullet.image, bullet)
 
     pygame.draw.rect(window, "black", (TILE_SIZE, TILE_SIZE, HEALTH_WIDTH * player.max_health, HEALTH_HEIGHT))
-    # Loop door alle mogelijke gezondheidspunten
+    
     for i in range(player.max_health):
         x_pos = TILE_SIZE + i * HEALTH_WIDTH
         y_pos = TILE_SIZE
 
         if i < player.health:
-            # Teken vol blokje
+            
             window.blit(health_image, (x_pos, y_pos))
         else:
-            # Teken leeg blokje (omdat de speler damage heeft gehad)
+            
             window.blit(health_empty_image, (x_pos, y_pos))
     for i in range(player.health):
         window.blit(health_image, (TILE_SIZE + i * HEALTH_WIDTH, TILE_SIZE))
@@ -618,6 +658,22 @@ def draw():
         text_surface = game_over_font.render("PRESS ENTER", False, "black")
         window.blit(text_surface, (GAME_WIDTH/8, GAME_HEIGHT/2 + TILE_SIZE))
 
+
+
+def draw_start_screen():
+    window.fill((187 , 221 , 254))
+    window.blit(background_image, (0, 40))
+    
+    
+    title_surface = game_over_font.render("DINO SHOOTING GAME", False, "black")
+    window.blit(title_surface, (GAME_WIDTH/2 - title_surface.get_width()/2, GAME_HEIGHT/3))
+    
+    
+    start_surface = game_over_font.render("Press ENTER to start", False, "black")
+    window.blit(start_surface, (GAME_WIDTH/2 - start_surface.get_width()/2, GAME_HEIGHT/2))
+    
+    
+    window.blit(player_image_right, (GAME_WIDTH/2 - PLAYER_WIDTH/2, GAME_HEIGHT/1.5))
 
 
 #start game
@@ -643,6 +699,20 @@ while True: #game loop
             player.shooting = False
 
     keys = pygame.key.get_pressed()
+    
+    # NIEUW: Start scherm logica
+    if show_start_screen:
+        draw_start_screen()
+        pygame.display.update()
+        clock.tick(60)
+        
+        # Als de speler op ENTER drukt, start het spel
+        if keys[pygame.K_RETURN] or keys[pygame.K_KP_ENTER]:
+            show_start_screen = False
+        
+        # Sla de rest van de loop over zolang we in het startscherm zitten
+        continue
+    
     if (keys[pygame.K_RETURN]) or keys[pygame.KSCAN_KP_ENTER] and game_over:
         reset_game()
         
@@ -650,6 +720,11 @@ while True: #game loop
     if (keys[pygame.K_UP] or keys[pygame.K_z]) and not player.jumping:
         player.velocity_y = PLAYER_VELOCITY_Y
         player.jumping = True
+
+    if keys[pygame.K_LEFT] or keys[pygame.K_q] or  keys[pygame.K_RIGHT] or keys[pygame.K_d]:
+        player.walking = True
+    else:
+        player.walking = False
 
     if keys[pygame.K_LEFT] or keys[pygame.K_q]:
         # player.velocity_x = -PLAYER_VELOCITY_X
