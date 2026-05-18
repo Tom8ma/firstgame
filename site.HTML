@@ -3,30 +3,40 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Naam Checker</title>
-    
-    <!-- Ingebouwde debugger om fouten makkelijk op te sporen -->
-    <script>
-        window.onerror = function(msg, url, line, col, error) {
-            alert("Er is een fout opgetreden!\n\nMelding: " + msg + "\nOp regel: " + line);
-            return false;
-        };
-    </script>
-
+    <title>Ultimate Vibe Checker</title>
     <style>
-        /* Basis en achtergrond - trager en vloeiender gemaakt */
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap');
+
+        /* Basis en dynamische achtergrond */
         body {
-            font-family: sans-serif;
+            font-family: 'Poppins', sans-serif;
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
             margin: 0;
-            background: linear-gradient(135deg, #e0eafc, #cfdef3, #e0eafc);
+            background: linear-gradient(135deg, #667eea, #764ba2);
             background-size: 200% 200%;
-            animation: gradientBG 10s ease-in-out infinite;
-            overflow: hidden; 
-            transition: background 0.8s ease-in-out;
+            animation: gradientBG 10s ease infinite;
+            overflow: hidden;
+            transition: all 1s ease-in-out;
+            color: #fff;
+            position: relative; /* Nodig voor CRT effect */
+        }
+
+        /* Retro CRT Monitor Overlay */
+        body::after {
+            content: " ";
+            display: block;
+            position: absolute;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
+            z-index: 9999;
+            background-size: 100% 3px, 6px 100%;
+            pointer-events: none; /* Zorgt dat je er doorheen kan klikken */
         }
 
         @keyframes gradientBG {
@@ -35,244 +45,512 @@
             100% { background-position: 0% 50%; }
         }
 
-        /* Container met verbeterd 3D effect en hardware acceleratie */
+        /* Glassmorphism Container */
         .container-wrapper {
-            perspective: 1000px;
+            perspective: 1200px;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
         }
 
-        .container {
+        .glass-panel {
             text-align: center;
-            background: white;
-            padding: 2.5rem 2rem;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-            width: 320px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 3rem 2.5rem;
+            border-radius: 24px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+            width: 340px;
             transform-style: preserve-3d;
-            /* Basis overgang, wordt door JS overschreven voor super smooth effect */
-            transition: transform 0.1s ease-out, box-shadow 0.3s ease-in-out, background-color 0.4s ease;
-            animation: popIn 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            will-change: transform;
+            transition: transform 0.1s ease-out, box-shadow 0.4s ease;
+            position: relative;
+            overflow: hidden;
         }
 
-        @keyframes popIn {
-            0% { transform: scale(0.8) rotateX(15deg); opacity: 0; }
-            100% { transform: scale(1) rotateX(0deg); opacity: 1; }
+        /* Systeem Logboek (Geschiedenis) */
+        .history-panel {
+            padding: 1.5rem;
+            display: none; /* Wordt zichtbaar via JS */
+            animation: slideUp 0.5s ease forwards;
+        }
+        
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
-        /* Invoerveld vloeiender gemaakt */
+        .history-title {
+            margin-top: 0;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+            padding-bottom: 8px;
+            margin-bottom: 10px;
+        }
+
+        .history-list {
+            font-size: 13px;
+            text-align: left;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        /* Scanner lijn effect tijdens laden */
+        .scanner {
+            position: absolute;
+            top: -100%;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: rgba(255, 255, 255, 0.8);
+            box-shadow: 0 0 15px rgba(255,255,255,0.8), 0 0 30px #00c9ff;
+            opacity: 0;
+            z-index: 10;
+        }
+        .scanning .scanner {
+            opacity: 1;
+            animation: scanLine 1.2s linear infinite;
+        }
+        @keyframes scanLine {
+            0% { top: 0%; }
+            100% { top: 100%; }
+        }
+
+        /* Typografie */
+        h1 {
+            font-size: 24px;
+            margin-bottom: 30px;
+            font-weight: 800;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            transform: translateZ(30px);
+        }
+
+        /* Input styling */
+        .input-wrapper {
+            position: relative;
+            transform: translateZ(25px);
+            margin-bottom: 25px;
+            display: inline-block;
+            width: 85%;
+        }
+
+        /* Focus HUD (Target effect) */
+        .input-wrapper::before, .input-wrapper::after {
+            content: '';
+            position: absolute;
+            width: 15px;
+            height: 15px;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+            pointer-events: none;
+        }
+        .input-wrapper::before {
+            top: -5px; left: -5px;
+            border-top-color: #00c9ff; border-left-color: #00c9ff;
+            opacity: 0;
+        }
+        .input-wrapper::after {
+            bottom: -5px; right: -5px;
+            border-bottom-color: #00c9ff; border-right-color: #00c9ff;
+            opacity: 0;
+        }
+        
+        .input-wrapper:focus-within::before, 
+        .input-wrapper:focus-within::after {
+            opacity: 1;
+            transform: scale(1.1);
+        }
+
         input {
-            padding: 12px;
-            width: 80%;
-            margin-bottom: 20px;
-            border: 2px solid #ddd;
-            border-radius: 8px;
+            width: 100%;
+            box-sizing: border-box;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 12px;
             font-size: 16px;
-            transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
-            transform: translateZ(20px); 
-            will-change: transform, box-shadow;
+            color: #fff;
+            text-align: center;
+            font-family: 'Poppins', sans-serif;
+            transition: all 0.3s ease;
+        }
+
+        input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
         }
 
         input:focus {
             outline: none;
-            border-color: #007BFF;
-            box-shadow: 0 0 20px rgba(0, 123, 255, 0.3);
-            transform: translateZ(30px) scale(1.03);
+            background: rgba(255, 255, 255, 0.25);
+            border-color: #fff;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
         }
 
-        /* Knop met zachtere schaduwen */
+        /* Neon Knop */
         button {
-            background-color: #007BFF;
-            color: white;
+            background: linear-gradient(90deg, #00c9ff, #92fe9d);
+            color: #111;
             border: none;
-            padding: 12px 24px;
+            padding: 14px 28px;
             font-size: 16px;
-            font-weight: bold;
-            border-radius: 8px;
+            font-weight: 800;
+            border-radius: 12px;
             cursor: pointer;
             transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-            box-shadow: 0 4px 10px rgba(0, 123, 255, 0.3);
-            transform: translateZ(30px); 
-            will-change: transform, box-shadow;
+            box-shadow: 0 4px 15px rgba(0, 201, 255, 0.4);
+            transform: translateZ(30px);
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
         button:hover {
-            background-color: #0056b3;
-            transform: translateZ(40px) translateY(-3px);
-            box-shadow: 0 10px 20px rgba(0, 123, 255, 0.4);
-        }
-
-        button:active {
-            transform: translateZ(25px) translateY(2px);
-            box-shadow: 0 2px 5px rgba(0, 123, 255, 0.3);
+            transform: translateZ(45px) translateY(-3px);
+            box-shadow: 0 10px 25px rgba(0, 201, 255, 0.6);
+            background: linear-gradient(90deg, #92fe9d, #00c9ff);
         }
 
         button:disabled {
-            background-color: #cccccc;
+            background: rgba(255, 255, 255, 0.2);
+            color: rgba(255, 255, 255, 0.5);
+            box-shadow: none;
             cursor: not-allowed;
             transform: translateZ(10px);
-            box-shadow: none;
         }
 
         /* Antwoord tekst */
         #antwoord {
-            margin-top: 25px;
-            font-weight: bold;
+            margin-top: 30px;
+            font-weight: 600;
             font-size: 18px;
-            color: #333;
             min-height: 4em;
-            display: block;
             transform: translateZ(20px);
-            transition: color 0.4s ease;
+            line-height: 1.4;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
         }
 
-        /* --- NIEUWE FEATURES --- */
-
-        /* Vibe Meter zachter inladen */
+        /* Vibe Meter UI */
         .vibe-box {
-            margin-top: 20px;
+            margin-top: 25px;
             opacity: 0;
-            transition: opacity 0.8s ease-in-out, transform 0.6s ease;
+            transition: all 0.6s ease;
             transform: translateZ(15px) translateY(10px);
         }
-
         .vibe-box.show {
             opacity: 1;
             transform: translateZ(15px) translateY(0);
         }
-
         .vibe-label {
-            font-size: 14px;
-            font-weight: bold;
-            margin-bottom: 5px;
-            color: #555;
-            transition: color 0.4s ease;
+            font-size: 13px;
+            font-weight: 800;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
-
         .vibe-bar {
             width: 100%;
-            height: 15px;
-            background: #eee;
-            border-radius: 10px;
+            height: 12px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 20px;
             overflow: hidden;
-            border: 1px solid #ccc;
-            box-shadow: inset 0 2px 5px rgba(0,0,0,0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
-
         .vibe-fill {
             height: 100%;
             width: 0%;
             background: linear-gradient(90deg, #ff4e50, #f9d423, #00c9ff, #92fe9d);
             background-size: 300% 100%;
-            transition: width 2s cubic-bezier(0.22, 1, 0.36, 1); /* Super vloeiende balk */
-            animation: vibeShimmer 4s infinite linear;
+            transition: width 1.5s cubic-bezier(0.22, 1, 0.36, 1), background 0.5s ease;
+            animation: vibeShimmer 3s infinite linear;
         }
 
-        @keyframes vibeShimmer {
-            0% { background-position: 100% 0; }
-            100% { background-position: 0 0; }
+        /* Noodstop (Emergency Stop Button) */
+        #noodstop {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 90px;
+            height: 90px;
+            background: radial-gradient(circle at 30% 30%, #ff4e50, #cc0000);
+            border: 5px solid #fff;
+            border-radius: 50%;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.6), inset 0 -5px 15px rgba(0,0,0,0.5);
+            cursor: pointer;
+            z-index: 10000; /* Boven de CRT overlay */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 12px;
+            font-weight: 900;
+            text-align: center;
+            color: #fff;
+            text-transform: uppercase;
+            transition: transform 0.1s;
         }
 
-        /* Volledig Scherm Trillen - Vloeiendere golfbeweging */
-        body.mega-shake {
-            animation: megaShake 0.5s cubic-bezier(0.36, 0.07, 0.19, 0.97) infinite;
-        }
-        @keyframes megaShake {
-            0%, 100% { transform: translate(0, 0) rotate(0deg); }
-            25% { transform: translate(-3px, 3px) rotate(-0.5deg); }
-            50% { transform: translate(3px, -3px) rotate(0.5deg); }
-            75% { transform: translate(-3px, -3px) rotate(-0.5deg); }
+        #noodstop:active {
+            transform: scale(0.9) translateY(5px);
+            box-shadow: 0 5px 10px rgba(0,0,0,0.6), inset 0 5px 20px rgba(0,0,0,0.7);
         }
 
-        /* Hacker Mode Easter Egg */
-        body.hacker-mode {
+        /* --- MINI GAME CSS --- */
+        #miniGameArea {
+            display: none;
+            margin-top: 10px;
+            transform: translateZ(25px);
+            animation: slideUp 0.5s ease;
+        }
+        .game-track {
+            width: 100%;
+            height: 30px;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 15px;
+            position: relative;
+            overflow: hidden;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.8);
+        }
+        .game-target {
+            position: absolute;
+            left: 38%;
+            width: 24%;
+            height: 100%;
+            background: rgba(0, 255, 0, 0.2);
+            border-left: 2px dashed #0f0;
+            border-right: 2px dashed #0f0;
+        }
+        .game-slider {
+            position: absolute;
+            left: 0%;
+            width: 6px;
+            height: 100%;
+            background: #fff;
+            box-shadow: 0 0 15px #fff, 0 0 30px #00c9ff;
+            border-radius: 3px;
+        }
+        .game-status {
+            font-family: 'Courier New', Courier, monospace;
+            color: #00c9ff;
+            font-weight: bold;
+            margin-top: 15px;
+            font-size: 15px;
+            text-shadow: 0 0 5px #00c9ff;
+        }
+
+        /* --- THEMA'S EN EFFECTEN --- */
+
+        /* God Mode (Thomas) */
+        body.theme-god {
+            background: linear-gradient(135deg, #d4af37, #fff200, #ffb900);
+            background-size: 200% 200%;
+        }
+        .theme-god .glass-panel {
+            border-color: #fff;
+            box-shadow: 0 0 50px rgba(255, 215, 0, 0.6), inset 0 0 20px rgba(255, 215, 0, 0.3);
+        }
+        .anim-god {
+            color: #fff;
+            text-shadow: 0 0 10px #fff, 0 0 20px #fff200, 0 0 40px #d4af37;
+            animation: godPulse 2s infinite alternate;
+        }
+        @keyframes godPulse {
+            from { transform: scale(1); text-shadow: 0 0 10px #fff, 0 0 20px #fff200; }
+            to { transform: scale(1.05); text-shadow: 0 0 20px #fff, 0 0 40px #fff200, 0 0 60px #d4af37; }
+        }
+
+        /* Hell Mode & Glitch (Wout, Sybren, Elias) */
+        body.theme-hell {
+            background: linear-gradient(135deg, #1a0000, #5c0000, #ff0000);
+            background-size: 200% 200%;
+            animation: megaShake 0.3s infinite;
+        }
+        .theme-hell .glass-panel {
+            background: rgba(0, 0, 0, 0.8);
+            border-color: #ff0000;
+            box-shadow: 0 0 40px rgba(255, 0, 0, 0.8);
+        }
+        .glitch-text {
+            color: #ff3333;
+            position: relative;
+            animation: glitch-skew 0.3s infinite linear alternate-reverse;
+        }
+        .glitch-text::before, .glitch-text::after {
+            content: attr(data-text);
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+        .glitch-text::before {
+            left: 2px;
+            text-shadow: -2px 0 #00ffea;
+            clip: rect(44px, 450px, 56px, 0);
+            animation: glitch-anim 2s infinite linear alternate-reverse;
+        }
+        .glitch-text::after {
+            left: -2px;
+            text-shadow: -2px 0 #ff0000;
+            clip: rect(44px, 450px, 56px, 0);
+            animation: glitch-anim2 2.5s infinite linear alternate-reverse;
+        }
+        @keyframes glitch-anim {
+            0% { clip: rect(10px, 9999px, 86px, 0); }
+            20% { clip: rect(42px, 9999px, 2px, 0); }
+            100% { clip: rect(12px, 9999px, 63px, 0); }
+        }
+        @keyframes glitch-skew {
+            0% { transform: skew(0deg); }
+            10% { transform: skew(-5deg); }
+            20% { transform: skew(4deg); }
+            100% { transform: skew(0deg); }
+        }
+
+        /* Cyberpunk/Industrial Mode (ICT, PLC, Arduino, MiniGame) */
+        body.theme-cyber {
             background: #050505;
         }
-        .container.hacker-mode-container {
-            background: #111;
-            box-shadow: 0 0 30px rgba(0, 255, 0, 0.4);
+        .theme-cyber .glass-panel {
+            background: rgba(0, 20, 0, 0.8);
             border: 1px solid #0f0;
+            box-shadow: 0 0 30px rgba(0, 255, 0, 0.2);
         }
-        .hacker-text {
-            color: #0f0 !important;
+        .theme-cyber input, .theme-cyber h1 {
             font-family: 'Courier New', Courier, monospace;
-            text-shadow: 0 0 8px #0f0;
+            color: #0f0;
+        }
+        .cyber-text {
+            color: #0f0;
+            font-family: 'Courier New', Courier, monospace;
+            text-shadow: 0 0 5px #0f0;
         }
 
-        /* Confetti sterren - zachtere val */
-        .star {
-            position: absolute;
-            top: -20px;
-            font-size: 24px;
-            animation: fall 4s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
-            pointer-events: none;
-            z-index: 999;
+        /* NOODSTOP ALARM MODE */
+        body.noodstop-alarm {
+            background: #ff0000 !important;
+            animation: alarmFlash 0.5s infinite !important;
         }
-        @keyframes fall {
-            to { transform: translateY(110vh) rotate(360deg); opacity: 0; }
+        @keyframes alarmFlash {
+            0%, 100% { background: #ff0000; }
+            50% { background: #400000; }
         }
 
-        /* Specifieke tekst effecten */
-        .anim-shake {
-            color: #d9534f !important;
-        }
-        .anim-glow {
-            color: #d4af37 !important;
-            text-shadow: 0 0 8px rgba(212, 175, 55, 0.6), 0 0 16px rgba(212, 175, 55, 0.4);
-            animation: pulseGlow 2s infinite alternate ease-in-out;
-        }
-        @keyframes pulseGlow {
-            from { transform: scale(1); text-shadow: 0 0 10px rgba(212, 175, 55, 0.5); }
-            to { transform: scale(1.03); text-shadow: 0 0 20px rgba(212, 175, 55, 0.9), 0 0 40px rgba(212, 175, 55, 0.6); }
+        @keyframes megaShake {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            25% { transform: translate(-5px, 5px) rotate(-1deg); }
+            50% { transform: translate(5px, -5px) rotate(1deg); }
+            75% { transform: translate(-5px, -5px) rotate(-1deg); }
         }
     </style>
 </head>
 <body>
 
     <div class="container-wrapper">
-        <div class="container" id="mainCard">
-            <h1 id="titleText" style="transition: color 0.4s ease;">Is deze persoon leuk?</h1>
+        <!-- Hoofdpaneel -->
+        <div class="glass-panel" id="mainCard">
+            <div class="scanner"></div>
+            <h1 id="titleText">Vibe Analysis System</h1>
             
-            <input type="text" id="naamInput" placeholder="Typ een naam...">
+            <div class="input-wrapper">
+                <input type="text" id="naamInput" placeholder="Voer target naam in..." autocomplete="off">
+            </div>
             <br>
-            <button id="checkKnop" onclick="checkNaam()">Check het!</button>
+            <button id="checkKnop" onclick="checkNaam()">Start Analyse</button>
             
-            <p id="antwoord"></p>
-
+            <!-- Standaard Vibe UI -->
+            <p id="antwoord" data-text=""></p>
             <div class="vibe-box" id="vibeBox">
-                <div class="vibe-label" id="vibeLabel">Vibe Meter: 0%</div>
+                <div class="vibe-label" id="vibeLabel">Vibe Capaciteit: 0%</div>
                 <div class="vibe-bar">
                     <div class="vibe-fill" id="vibeFill"></div>
                 </div>
             </div>
+
+            <!-- NIEUW: Mini Game UI (Verborgen) -->
+            <div id="miniGameArea">
+                <h3 style="margin:0 0 15px 0; font-size: 16px; color: #00c9ff; text-transform: uppercase; letter-spacing: 2px;">Sensor Calibratie</h3>
+                <div class="game-track">
+                    <div class="game-target"></div>
+                    <div class="game-slider" id="gameSlider"></div>
+                </div>
+                <button id="gameBtn" onclick="tryLock()" style="margin-top: 20px; width: 100%;">SYNC (LOCK)</button>
+                <div class="game-status" id="gameStatus">Targets: 0 / 3</div>
+            </div>
+
+        </div>
+
+        <!-- Geschiedenis Paneel (verborgen tot eerste scan) -->
+        <div class="glass-panel history-panel" id="historyPanel">
+            <h3 class="history-title">Systeem Logboek</h3>
+            <div class="history-list" id="historyList">
+                <!-- Items komen hier via Javascript -->
+            </div>
         </div>
     </div>
 
+    <!-- Fysieke Noodstop Knop -->
+    <div id="noodstop" onclick="triggerNoodstop()">
+        E-STOP<br>Nood
+    </div>
+
     <script>
-        // 1. VLOEIEND 3D Kantel effect voor de container
-        const card = document.getElementById('mainCard');
+        // --- AUDIO SYNTHESIZER (Genereert geluid in de browser) ---
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         
+        function playTone(freq, type, duration, vol=0.05) {
+            if(audioCtx.state === 'suspended') audioCtx.resume();
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            
+            osc.type = type;
+            osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+            
+            gain.gain.setValueAtTime(vol, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+            
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            
+            osc.start();
+            osc.stop(audioCtx.currentTime + duration);
+        }
+
+        // --- 3D EFFECT ---
+        const card = document.getElementById('mainCard');
         document.addEventListener('mousemove', (e) => {
-            // Snelle, vloeiende reactie tijdens het bewegen
+            if(document.body.classList.contains("noodstop-alarm")) return; // Stop effect bij alarm
             card.style.transition = 'transform 0.1s ease-out'; 
-            const xAxis = (window.innerWidth / 2 - e.pageX) / 30; // Iets subtielere hoek (/30 ipv /25)
-            const yAxis = (window.innerHeight / 2 - e.pageY) / 30;
+            const xAxis = (window.innerWidth / 2 - e.pageX) / 25; 
+            const yAxis = (window.innerHeight / 2 - e.pageY) / 25;
             card.style.transform = `rotateY(${xAxis}deg) rotateX(${yAxis}deg)`;
         });
         
-        // Glijd boterzacht terug naar het midden als de muis weggaat
         document.addEventListener('mouseleave', () => {
             card.style.transition = 'transform 0.8s cubic-bezier(0.25, 0.8, 0.25, 1)';
             card.style.transform = `rotateY(0deg) rotateX(0deg)`;
         });
 
-        // 2. Vloeiendere Typemachine functie
+        // --- TYPEMACHINE MET GELUID ---
         let typTimeout;
-        function typeWriter(text, element, speed = 35) {
+        function typeWriter(text, element, speed = 30) {
             element.innerHTML = "";
             let i = 0;
             function type() {
                 if (i < text.length) {
                     element.innerHTML += text.charAt(i);
+                    element.setAttribute('data-text', element.innerHTML);
+                    
+                    // Speel een retro computer bliepje bij elke letter
+                    if (text.charAt(i) !== " ") {
+                        playTone(600 + Math.random() * 200, 'square', 0.05, 0.02);
+                    }
+                    
                     i++;
                     typTimeout = setTimeout(type, speed);
                 }
@@ -280,25 +558,177 @@
             type();
         }
 
-        // 3. Confetti genereren
-        function gooiSterren() {
-            for (let i = 0; i < 60; i++) {
-                setTimeout(() => {
-                    const star = document.createElement("div");
-                    star.innerHTML = "⭐";
-                    star.className = "star";
-                    star.style.left = Math.random() * 100 + "vw";
-                    star.style.fontSize = Math.random() * 20 + 10 + "px";
-                    star.style.animationDuration = Math.random() * 3 + 2 + "s"; // Iets tragere val
-                    document.body.appendChild(star);
-                    
-                    setTimeout(() => star.remove(), 5000); // Netjes opruimen
-                }, i * 40); 
+        // --- LOGBOEK FUNCTIE ---
+        function voegToeAanLogboek(naam, vibeStatus, kleur) {
+            const historyPanel = document.getElementById('historyPanel');
+            const historyList = document.getElementById('historyList');
+            historyPanel.style.display = "block"; // Zichtbaar maken
+
+            const item = document.createElement('div');
+            item.style.borderLeft = `4px solid ${kleur}`;
+            item.style.paddingLeft = "10px";
+            item.style.background = "rgba(0,0,0,0.2)";
+            item.style.padding = "5px 5px 5px 10px";
+            item.style.borderRadius = "0 5px 5px 0";
+            
+            // Huidige tijd toevoegen voor dat extra industriële gevoel
+            const tijd = new Date().toLocaleTimeString('nl-NL', { hour12: false });
+            item.innerHTML = `<span style="color: rgba(255,255,255,0.5); font-size: 10px;">[${tijd}]</span> <strong>${naam}</strong>: ${vibeStatus}`;
+            
+            historyList.prepend(item); // Bovenaan toevoegen
+            
+            // Maximaal 4 items bewaren om het netjes te houden
+            if (historyList.children.length > 4) {
+                historyList.lastChild.remove();
             }
         }
 
-        // Hoofdfunctie
+        // --- NOODSTOP FUNCTIE ---
+        let alarmInterval;
+        function triggerNoodstop() {
+            if(audioCtx.state === 'suspended') audioCtx.resume();
+            
+            // UI blokkeren
+            document.body.className = "noodstop-alarm";
+            document.getElementById('mainCard').style.pointerEvents = "none";
+            document.getElementById('checkKnop').disabled = true;
+            document.getElementById('naamInput').disabled = true;
+            
+            // Mini game stopzetten als die bezig is
+            isGamePlaying = false;
+            clearInterval(gameInterval);
+            
+            // Tekst updaten
+            document.getElementById('titleText').innerText = "SYSTEM HALTED";
+            const antwoordVeld = document.getElementById('antwoord');
+            antwoordVeld.style.display = 'block';
+            document.getElementById('miniGameArea').style.display = 'none';
+            
+            antwoordVeld.innerHTML = "NOODSTOP GEACTIVEERD. GELIEVE DE INSTALLATIE ONMIDDELLIJK TE VERLATEN.";
+            antwoordVeld.className = "glitch-text";
+            antwoordVeld.setAttribute('data-text', antwoordVeld.innerHTML);
+            
+            document.getElementById('vibeBox').classList.remove('show');
+
+            // Harde fabriekssirene aanzetten
+            clearInterval(alarmInterval);
+            alarmInterval = setInterval(() => {
+                playTone(1200, 'square', 0.3, 0.2); // Hoge toon
+                setTimeout(() => playTone(800, 'square', 0.3, 0.2), 300); // Lage toon
+            }, 600);
+        }
+
+        // --- NIEUW: MINI GAME LOGICA (PLC SYNC) ---
+        let gameInterval;
+        let sliderPos = 0;
+        let sliderDir = 1;
+        let gameSpeed = 2;
+        let gameScore = 0;
+        let isGamePlaying = false;
+
+        function startMiniGame() {
+            // Verberg de standaard Vibe interface
+            document.getElementById('antwoord').style.display = 'none';
+            document.getElementById('vibeBox').style.display = 'none';
+            document.getElementById('checkKnop').style.display = 'none';
+            document.querySelector('.input-wrapper').style.display = 'none';
+            
+            // Toon de game interface
+            document.getElementById('miniGameArea').style.display = 'block';
+            document.getElementById('titleText').innerText = "PLC SYNC REQUIRED";
+            document.body.className = "theme-cyber"; // Hacker/Industriële look
+
+            gameScore = 0;
+            gameSpeed = 1.8;
+            isGamePlaying = true;
+            document.getElementById('gameStatus').innerText = "Targets: 0 / 3";
+            document.getElementById('gameStatus').style.color = "#00c9ff";
+            
+            const btn = document.getElementById('gameBtn');
+            btn.disabled = false;
+            btn.innerText = "SYNC (LOCK)";
+            btn.onclick = tryLock;
+
+            playTone(600, 'square', 0.2, 0.05); // Start geluidje
+            startGameLoop();
+        }
+
+        function startGameLoop() {
+            clearInterval(gameInterval);
+            gameInterval = setInterval(() => {
+                sliderPos += sliderDir * gameSpeed;
+                if (sliderPos >= 96) { sliderPos = 96; sliderDir = -1; playTone(300, 'square', 0.02, 0.01); }
+                if (sliderPos <= 0) { sliderPos = 0; sliderDir = 1; playTone(300, 'square', 0.02, 0.01); }
+                document.getElementById('gameSlider').style.left = sliderPos + '%';
+            }, 20);
+        }
+
+        function tryLock() {
+            if (!isGamePlaying) return;
+            
+            // De groene target zone zit ruwweg tussen 38% en 58%
+            if (sliderPos >= 38 && sliderPos <= 58) {
+                // HIT!
+                gameScore++;
+                playTone(880, 'sine', 0.1, 0.05); // Ping geluidje
+                document.getElementById('gameStatus').innerText = `Targets: ${gameScore} / 3`;
+                
+                if (gameScore >= 3) {
+                    // GEWONNEN
+                    isGamePlaying = false;
+                    clearInterval(gameInterval);
+                    playTone(1000, 'sine', 0.2, 0.05);
+                    setTimeout(() => playTone(1200, 'sine', 0.4, 0.05), 200);
+                    
+                    document.getElementById('gameStatus').innerText = "SYNC SUCCESVOL!";
+                    document.getElementById('gameStatus').style.color = "#0f0";
+                    
+                    const btn = document.getElementById('gameBtn');
+                    btn.innerText = "TERUG NAAR SYSTEEM";
+                    btn.onclick = stopMiniGame;
+                    
+                    voegToeAanLogboek("PLC SYNC", "Gekalibreerd", "#0f0");
+                } else {
+                    gameSpeed += 1.5; // Maak het elke keer sneller/moeilijker!
+                }
+            } else {
+                // MIS!
+                isGamePlaying = false;
+                clearInterval(gameInterval);
+                playTone(150, 'sawtooth', 0.4, 0.1); // Fout geluid
+                document.getElementById('gameStatus').innerText = "SYNC MISLUKT! Herstart...";
+                document.getElementById('gameStatus').style.color = "#ff4e50";
+                document.getElementById('gameBtn').disabled = true;
+                
+                voegToeAanLogboek("PLC SYNC", "Gefaald", "#ff4e50");
+                
+                // Automatisch herstarten na 1.5 seconde
+                setTimeout(startMiniGame, 1500); 
+            }
+        }
+
+        function stopMiniGame() {
+            clearInterval(gameInterval);
+            document.body.className = ""; // Reset thema
+            document.getElementById('miniGameArea').style.display = 'none';
+            
+            // Herstel de originele UI
+            document.getElementById('antwoord').style.display = 'block';
+            document.querySelector('.input-wrapper').style.display = 'inline-block';
+            document.getElementById('naamInput').value = ""; // Veld leegmaken
+            document.getElementById('checkKnop').style.display = 'inline-block';
+            document.getElementById('titleText').innerText = "Vibe Analysis System";
+            document.getElementById('antwoord').innerHTML = "Systeem gereed voor analyse.";
+        }
+
+        // --- HOOFDFUNCTIE ---
         function checkNaam() {
+            // Als noodstop actief is, doe niks
+            if(document.body.classList.contains("noodstop-alarm")) return;
+
+            // Activeer audio context bij eerste klik
+            if(audioCtx.state === 'suspended') audioCtx.resume();
+
             const origineleNaam = document.getElementById('naamInput').value.trim();
             const naamKleineLetters = origineleNaam.toLowerCase();
             const antwoordVeld = document.getElementById('antwoord');
@@ -308,75 +738,99 @@
             const vibeLabel = document.getElementById('vibeLabel');
             const titleText = document.getElementById('titleText');
 
-            // Reset alles van vorige beurten vloeiend
+            // --- CHECK OF MINIGAME GETRIGGERD MOET WORDEN ---
+            if (naamKleineLetters === "game" || naamKleineLetters === "minigame") {
+                startMiniGame();
+                return;
+            }
+
+            // Reset Systeem
             clearTimeout(typTimeout);
-            document.body.className = "";
-            card.className = "container";
+            document.body.className = ""; 
+            card.classList.remove('scanning');
             antwoordVeld.className = "";
-            titleText.className = "";
+            antwoordVeld.setAttribute('data-text', '');
             vibeBox.classList.remove('show');
             vibeFill.style.width = "0%";
-            vibeLabel.innerText = "Vibe Meter: 0%";
 
             if (origineleNaam === "") {
                 setTimeout(() => {
-                    antwoordVeld.innerHTML = "Vul eerst een naam in!";
-                    antwoordVeld.classList.add("anim-shake");
-                }, 200); // Korte delay zodat de reset effectief is
+                    playTone(200, 'sawtooth', 0.5, 0.1); // Error geluid
+                    antwoordVeld.innerHTML = "SYSTEM ERROR: Geen target ingevoerd.";
+                    antwoordVeld.classList.add("glitch-text");
+                }, 100);
                 return;
             }
 
-            // Easter Egg: ICT Mode
-            if (naamKleineLetters === "ict") {
-                document.body.classList.add("hacker-mode");
-                card.classList.add("hacker-mode-container");
-                antwoordVeld.classList.add("hacker-text");
-                titleText.classList.add("hacker-text");
-                titleText.innerText = "SYSTEM ACCESS GRANTED";
-                typeWriter("Welkom terug in de terminal. Industriële netwerken zijn veilig gesteld. Vibe check is niet relevant voor machines.", antwoordVeld, 30);
-                return;
-            } else {
-                titleText.innerText = "Is deze persoon leuk?";
-            }
-
-            // Voorkom spammen en start laden
+            // Start Analyse Modus
             knop.disabled = true;
-            knop.innerText = "Systeem analyseert...";
-            antwoordVeld.innerHTML = "Laden...";
+            knop.innerText = "Bezig met scannen...";
+            card.classList.add('scanning'); 
+            antwoordVeld.innerHTML = "";
+            titleText.innerText = "Vibe Analysis System";
+
+            // Scan geluidjes
+            let scanInterval = setInterval(() => {
+                playTone(400 + Math.random() * 400, 'sine', 0.1, 0.03);
+            }, 150);
 
             setTimeout(() => {
+                clearInterval(scanInterval);
+                card.classList.remove('scanning');
                 let antwoordTekst = "";
                 let vibePercentage = 0;
                 let vibeKleur = "#ff4e50"; 
+                let logStatus = ""; // Korte tekst voor in het logboek
 
-                if (naamKleineLetters === "sybren" || naamKleineLetters === "elias") {
-                    antwoordTekst = `${origineleNaam} is echt een kut kind. Systeem overload aan slechte vibes!`;
-                    antwoordVeld.classList.add("anim-shake");
-                    document.body.classList.add("mega-shake"); 
-                    vibePercentage = Math.floor(Math.random() * 5); 
-                    vibeLabel.innerText = `Vibe Meter: ERROR (Gevaarlijk Laag)`;
+                // THEMA & LOGICA BEPALEN
+                if (naamKleineLetters === "ict" || naamKleineLetters === "plc" || naamKleineLetters === "arduino") {
+                    document.body.classList.add("theme-cyber");
+                    playTone(800, 'square', 0.5, 0.05); // Tech bliep
+                    titleText.innerText = "INDUSTRIAL OVERRIDE";
+                    antwoordVeld.classList.add("cyber-text");
+                    antwoordTekst = `Hardware gedetecteerd. Relais schakelen in. Motoren draaien. Industriële netwerken zijn veilig gesteld. Vibe check genegeerd voor ${origineleNaam}.`;
+                    vibeLabel.innerText = `Systeem Status: OVERRIDE`;
+                    vibePercentage = 100;
+                    vibeKleur = "#0f0";
+                    logStatus = "SYSTEM OVERRIDE";
+                }
+                else if (naamKleineLetters === "sybren" || naamKleineLetters === "elias") {
+                    document.body.classList.add("theme-hell");
+                    playTone(100, 'sawtooth', 1.5, 0.15); // Zware error buzzer
+                    antwoordVeld.classList.add("glitch-text");
+                    antwoordTekst = `WAARSCHUWING: ${origineleNaam} gedetecteerd. Dit is echt een kut kind. Systeem weigert verdere interactie.`;
+                    vibePercentage = 0;
+                    vibeLabel.innerText = `FATAL ERROR: Vibe te laag`;
+                    logStatus = "GEVAARLIJK LAAG";
                 }
                 else if (naamKleineLetters === "wout") {
+                    document.body.classList.add("theme-hell");
+                    playTone(100, 'sawtooth', 1.5, 0.15); // Zware error buzzer
+                    antwoordVeld.classList.add("glitch-text");
                     const woutFeiten = [
-                        `${origineleNaam} is echt een kut kind en denkt stiekem dat HTML een volwaardige programmeertaal is.`,
-                        `${origineleNaam} heeft standaard drie pogingen nodig voordat hij een USB-stick in een pc krijgt.`,
-                        `${origineleNaam} draagt waarschijnlijk zijn sokken binnenstebuiten voor een extra dag.`,
-                        `${origineleNaam} is het type dat struikelt over een wifi-verbinding.`,
-                        `${origineleNaam} heeft hoogstwaarschijnlijk 'wachtwoord123' als wachtwoord ingesteld.`
+                        `${origineleNaam} gedetecteerd. Denkt stiekem dat HTML een programmeertaal is. Kut kind status: Bevestigd.`,
+                        `${origineleNaam} heeft de server gekraakt door over de wifi-kabel te struikelen.`,
+                        `Analyse compleet: ${origineleNaam} draagt vandaag zijn sokken binnenstebuiten.`,
+                        `Beveiligingswaarschuwing: Wachtwoord van ${origineleNaam} is nog steeds 'wachtwoord123'.`
                     ];
                     antwoordTekst = woutFeiten[Math.floor(Math.random() * woutFeiten.length)];
-                    antwoordVeld.classList.add("anim-shake");
-                    document.body.classList.add("mega-shake");
-                    vibePercentage = -10;
-                    vibeLabel.innerText = `Vibe Meter: -10% (Bodempunt bereikt)`;
+                    vibePercentage = 2;
+                    vibeLabel.innerText = `TOXICITY LEVEL: KRITIEK`;
+                    logStatus = "TOXIC";
                 }
                 else if (naamKleineLetters === "thomas") {
-                    antwoordTekst = `${origineleNaam} is een absolute legende, een puur meesterbrein en de belichaming van perfectie. We zijn niet waardig!`;
-                    antwoordVeld.classList.add("anim-glow");
-                    vibePercentage = 100;
-                    vibeLabel.innerText = `Vibe Meter: 999% (GOD MODE)`;
-                    vibeFill.style.background = "linear-gradient(90deg, #d4af37, #fff, #d4af37)";
-                    gooiSterren();
+                    document.body.classList.add("theme-god");
+                    // Hemels Akkoord spelen
+                    playTone(523.25, 'sine', 3, 0.1); // C
+                    playTone(659.25, 'sine', 3, 0.1); // E
+                    playTone(783.99, 'sine', 3, 0.1); // G
+                    
+                    antwoordVeld.classList.add("anim-god");
+                    antwoordTekst = `AURA OVERLOAD. ${origineleNaam} is een absolute legende, een puur meesterbrein en de belichaming van perfectie. We zijn niet waardig!`;
+                    vibePercentage = 999;
+                    vibeLabel.innerText = `Vibe Capaciteit: INFINITE`;
+                    vibeKleur = "linear-gradient(90deg, #fff, #d4af37, #fff)";
+                    logStatus = "GOD MODE";
                 } 
                 else {
                     let som = 0;
@@ -385,42 +839,49 @@
                     }
 
                     const opties = [
-                        `${origineleNaam} is super leuk!`,
-                        `${origineleNaam} is echt niet leuk...`,
-                        `${origineleNaam} is best wel oké, denk ik.`,
-                        `${origineleNaam} is absoluut de allerleukste!`
+                        `${origineleNaam} is goedgekeurd. Uitstekende vibes gedetecteerd!`,
+                        `${origineleNaam} valt tegen... De vibes zijn ver te zoeken.`,
+                        `${origineleNaam} is redelijk neutraal. Kan ermee door.`,
+                        `${origineleNaam} heeft ongekend fantastische vibes!`
                     ];
                     
                     antwoordTekst = opties[som % opties.length];
                     vibePercentage = (som % 100); 
                     
-                    if (vibePercentage < 30) vibeKleur = "#ff4e50"; 
-                    else if (vibePercentage < 70) vibeKleur = "#f9d423"; 
-                    else vibeKleur = "#92fe9d"; 
+                    if (vibePercentage < 30) {
+                        vibeKleur = "#ff4e50"; 
+                        logStatus = "Laag";
+                    } else if (vibePercentage < 70) {
+                        vibeKleur = "#f9d423"; 
+                        logStatus = "Neutraal";
+                    } else {
+                        vibeKleur = "#92fe9d";
+                        logStatus = "Uitstekend";
+                        playTone(880, 'sine', 0.5, 0.05); // Succes ping
+                    }
 
-                    vibeLabel.innerText = `Vibe Meter: ${vibePercentage}%`;
-                    vibeFill.style.background = vibeKleur;
+                    vibeLabel.innerText = `Vibe Capaciteit: ${vibePercentage}%`;
                 }
 
-                // Tekst typen
-                typeWriter(antwoordTekst, antwoordVeld, 30);
+                // OUTPUT
+                typeWriter(antwoordTekst, antwoordVeld, 35);
                 
-                // Vibe balkje in beeld laten faden via class 'show'
                 vibeBox.classList.add('show');
-                
-                // Met een extra korte delay de balk vloeiend vullen
                 setTimeout(() => {
-                    vibeFill.style.width = vibePercentage < 0 ? "0%" : `${vibePercentage}%`;
-                }, 400);
+                    vibeFill.style.background = vibeKleur;
+                    vibeFill.style.width = vibePercentage > 100 ? "100%" : `${vibePercentage}%`;
+                }, 300);
 
-                // Zet de knop weer aan
+                // Update het logboek
+                const logKleur = (naamKleineLetters === "thomas") ? "#d4af37" : vibeKleur; // Goud voor thomas in de log
+                voegToeAanLogboek(origineleNaam, logStatus, logKleur);
+
                 setTimeout(() => {
                     knop.disabled = false;
-                    knop.innerText = "Check het!";
-                    document.body.classList.remove("mega-shake"); 
-                }, 2200); 
+                    knop.innerText = "Nieuwe Analyse";
+                }, 2500); 
 
-            }, 800); 
+            }, 1200); 
         }
     </script>
 

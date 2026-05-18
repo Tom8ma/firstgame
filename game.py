@@ -12,6 +12,8 @@ GAME_WIDTH = TILE_SIZE * COLUMN_COUNT
 GAME_HEIGHT = TILE_SIZE * ROW_COUNT
 GAME_MAP = tile_map.GAME_MAP1
 SPIKE_SIZE = TILE_SIZE *2
+TILE_SIZE_2 = 50
+
 
 PLAYER_X = GAME_WIDTH/2
 PLAYER_Y = GAME_HEIGHT/2
@@ -146,10 +148,26 @@ life_energy_image = load_image("HOTDOG.png", (LIFE_ENERGY_WIDTH, LIFE_ENERGY_HEI
 big_life_energy_image = load_image("KALOKOEN.png", (BIG_LIFE_ENERGY_WIDTH, BIG_LIFE_ENERGY_HEIGHT))
 blader_image_right = load_image("flying ER.png", (BLADER_WIDTH, BLADER_HEIGHT))
 blader_image_left = load_image("flying EL.png", (BLADER_WIDTH, BLADER_HEIGHT))
+
 spike_images = [
     load_image("Cactus (1).png", (TILE_SIZE, TILE_SIZE *2)),
     load_image("Cactus (2).png", (TILE_SIZE, TILE_SIZE)),
     load_image("Cactus (3).png", (TILE_SIZE, TILE_SIZE * 1.5))
+]
+
+stone_images = [
+    load_image("Stone.png", (TILE_SIZE_2 *3, TILE_SIZE_2 *3)),
+    load_image("Tree.png", (TILE_SIZE_2 *3, TILE_SIZE_2 *3)),
+    
+     
+]
+ob_images = [
+    load_image("Bush (1).png", (TILE_SIZE, TILE_SIZE )),
+    load_image("Bush (2).png", (PLAYER_WIDTH, PLAYER_HEIGHT)),
+    load_image("Grass (1).png", (TILE_SIZE, TILE_SIZE )),
+    load_image("Grass (2).png", (TILE_SIZE, TILE_SIZE )),
+    load_image("Skeleton.png", (TILE_SIZE, TILE_SIZE  )),
+     
 ]
 
 pygame.init() #START GAME
@@ -400,6 +418,14 @@ def create_map():
                 tiles.append(Tile(x, y, rock_tile17_image))
             elif map_code == 23:
                 tiles.append(Tile(x, y, rock_tile_BARRIER_image))
+            elif map_code == 24:
+                image = random.choice(ob_images)
+                background_tiles.append(Tile(x, y + TILE_SIZE - image.get_height(), image))
+            elif map_code == 25:
+                # AANGEPAST: toegevoegd aan background_tiles i.p.v. tiles EN de hoogte gecorrigeerd!
+                background_tiles.append(Tile(x, y + TILE_SIZE - stone_image.get_height(), stone_image))
+            elif map_code == 26:
+                background_tiles.append(Tile(x, y, rock_tile_BARRIER_image))
 
 
 def reset_game():
