@@ -2,6 +2,7 @@ import pygame
 from sys import exit
 import os
 import random
+import math
 import tile_map
 
 #game variables
@@ -13,6 +14,7 @@ GAME_HEIGHT = TILE_SIZE * ROW_COUNT
 GAME_MAP = tile_map.GAME_MAP1
 SPIKE_SIZE = TILE_SIZE *2
 TILE_SIZE_2 = 50
+CRATE_SIZE = int(TILE_SIZE * 1)
 
 
 PLAYER_X = GAME_WIDTH/2
@@ -61,7 +63,6 @@ LIFE_ENERGY_WIDTH = 50
 LIFE_ENERGY_HEIGHT = 50
 BIG_LIFE_ENERGY_WIDTH = 50
 BIG_LIFE_ENERGY_HEIGHT = 50
-ITEM_VELOCITY_Y = -11 #item flies up first and gravity pulls it down
 
 #images
 def load_image(image_name, scale=None):
@@ -133,6 +134,7 @@ rock_tile13_image = load_image("13.png", (TILE_SIZE, TILE_SIZE))
 rock_tile12_image = load_image("12.png", (TILE_SIZE, TILE_SIZE))
 rock_tile17_image = load_image("17.png", (TILE_SIZE, TILE_SIZE))
 rock_tile_BARRIER_image = load_image("BARRIER.png", (TILE_SIZE, TILE_SIZE))
+pilar_tile_image = load_image("StoneBlock.png", (TILE_SIZE, TILE_SIZE))
 
 
 metall_image_right = load_image("VOLCA.png", (METALL_WIDTH, METALL_HEIGHT))
@@ -148,26 +150,22 @@ life_energy_image = load_image("HOTDOG.png", (LIFE_ENERGY_WIDTH, LIFE_ENERGY_HEI
 big_life_energy_image = load_image("KALOKOEN.png", (BIG_LIFE_ENERGY_WIDTH, BIG_LIFE_ENERGY_HEIGHT))
 blader_image_right = load_image("flying ER.png", (BLADER_WIDTH, BLADER_HEIGHT))
 blader_image_left = load_image("flying EL.png", (BLADER_WIDTH, BLADER_HEIGHT))
+stone_image = load_image("Stone.png", (TILE_SIZE_2 *3, TILE_SIZE_2 *2))
+tree_image = load_image("Tree.png", (TILE_SIZE_2 *4, TILE_SIZE_2 *4))
+skele_image = load_image("Skeleton.png", (TILE_SIZE*3, TILE_SIZE *1 ))
+crate_image = load_image("Crate.png", (CRATE_SIZE, CRATE_SIZE))
 
 spike_images = [
     load_image("Cactus (1).png", (TILE_SIZE, TILE_SIZE *2)),
     load_image("Cactus (2).png", (TILE_SIZE, TILE_SIZE)),
-    load_image("Cactus (3).png", (TILE_SIZE, TILE_SIZE * 1.5))
+    load_image("Cactus (3).png", (TILE_SIZE, int(TILE_SIZE * 1.5)))
 ]
 
-stone_images = [
-    load_image("Stone.png", (TILE_SIZE_2 *3, TILE_SIZE_2 *3)),
-    load_image("Tree.png", (TILE_SIZE_2 *3, TILE_SIZE_2 *3)),
-    
-     
-]
 ob_images = [
-    load_image("Bush (1).png", (TILE_SIZE, TILE_SIZE )),
-    load_image("Bush (2).png", (PLAYER_WIDTH, PLAYER_HEIGHT)),
-    load_image("Grass (1).png", (TILE_SIZE, TILE_SIZE )),
-    load_image("Grass (2).png", (TILE_SIZE, TILE_SIZE )),
-    load_image("Skeleton.png", (TILE_SIZE, TILE_SIZE  )),
-     
+    load_image("Bush (1).png", (int(TILE_SIZE * 1.5), int(TILE_SIZE * 1.5))),
+    load_image("Bush (2).png", (TILE_SIZE, TILE_SIZE)),
+    load_image("Grass (1).png", (TILE_SIZE, int(TILE_SIZE * 0.8))),
+    load_image("Grass (2).png", (TILE_SIZE, int(TILE_SIZE * 0.8))),
 ]
 
 pygame.init() #START GAME
@@ -339,11 +337,18 @@ class Blader(pygame.Rect):
         self.max_range_x = TILE_SIZE*4
         self.max_range_y = TILE_SIZE
 
+
     def update_image(self):
         if self.direction == "right":
             self.image = blader_image_right
         elif self.direction == "left":
             self.image = blader_image_left
+
+class Crate(pygame.Rect):
+    def __init__(self, x, y):
+        pygame.Rect.__init__(self, x, y, CRATE_SIZE, CRATE_SIZE)
+        self.image = crate_image
+        self.health = 1
 
 class Spike(pygame.Rect):
     def __init__(self, x, y, image):
@@ -359,8 +364,8 @@ class Item(pygame.Rect):
     def __init__(self, x, y, image):
         pygame.Rect.__init__(self, x, y, image.get_width(), image.get_height())
         self.image = image
-        self.jumping = False
-        self.velocity_y = ITEM_VELOCITY_Y
+        self.base_y = y
+        self.spawn_time = pygame.time.get_ticks()
         self.used = False
 
 def create_map():
@@ -384,7 +389,7 @@ def create_map():
             elif map_code == 6:
                 tiles.append(Tile(x, y, wall_tile_image))
             elif map_code == 7:
-                background_tiles.append(Tile(x, y, beam_tile_image))
+                background_tiles.append(Tile(x, y, pilar_tile_image))
             elif map_code == 8:
                 image = random.choice(spike_images)
                 spikes.append(Tile(x, y + TILE_SIZE - image.get_height(), image))
@@ -422,15 +427,18 @@ def create_map():
                 image = random.choice(ob_images)
                 background_tiles.append(Tile(x, y + TILE_SIZE - image.get_height(), image))
             elif map_code == 25:
-                # AANGEPAST: toegevoegd aan background_tiles i.p.v. tiles EN de hoogte gecorrigeerd!
                 background_tiles.append(Tile(x, y + TILE_SIZE - stone_image.get_height(), stone_image))
             elif map_code == 26:
-                background_tiles.append(Tile(x, y, rock_tile_BARRIER_image))
+                background_tiles.append(Tile(x, y + TILE_SIZE - tree_image.get_height(), tree_image))
+            elif map_code == 27:
+                background_tiles.append(Tile(x, y + TILE_SIZE - skele_image.get_height(), skele_image))
+            elif map_code == 28:
+                crates.append(Crate(x, y + TILE_SIZE - CRATE_SIZE))
 
 
 def reset_game():
     global player , metalls , metall_bullets , tiles, background_tiles , \
-        items, spikes , bladers, game_over
+        items, spikes , bladers, game_over , crates
     player = Player()
     metalls = []
     metall_bullets =[] #bullets for metall
@@ -439,6 +447,7 @@ def reset_game():
     items = []
     spikes = [] #traps, hazards
     bladers = []
+    crates = []
     create_map()
     game_over = False
 
@@ -470,9 +479,14 @@ def check_tile_collision_y(character):
 def drop_item(character):
     random_number = random.randint(1, 100) #inclusive of 100
     if 0 < random_number <= 20:
-        items.append(Item(character.x, character.y, big_life_energy_image))
+        item_y = character.y + character.height - BIG_LIFE_ENERGY_HEIGHT
+        items.append(Item(character.x, item_y, big_life_energy_image))
     elif 20 < random_number <= 100:
-        items.append(Item(character.x, character.y, life_energy_image))
+        item_y = character.y + character.height - LIFE_ENERGY_HEIGHT
+        items.append(Item(character.x, item_y, life_energy_image))
+
+
+
 
 def move_player_x(velocity_x):
     move_map_x(velocity_x)
@@ -504,9 +518,12 @@ def move_map_x(velocity_x):
     for blader in bladers:
         blader.start_x += velocity_x
         blader.x += velocity_x
+        
+    for crate in crates:
+        crate.x += velocity_x
 
 def move():
-    global metalls, items, bladers , metall_bullets , game_over
+    global metalls, items, bladers , metall_bullets , game_over , crates
     #y movement
     player.velocity_y += GRAVITY
     player.y += player.velocity_y
@@ -536,6 +553,16 @@ def move():
                 if blader.health <= 0:
                     drop_item(blader)
                     player.score += 500
+                    
+        for crate in crates:
+            if crate.health > 0 and not bullet.used and bullet.colliderect(crate):
+                bullet.used = True
+                crate.health -= 1
+                if crate.health <= 0:
+                    # 100% chance for life_energy_image
+                    item_y = crate.y + crate.height - LIFE_ENERGY_HEIGHT
+                    items.append(Item(crate.x, item_y, life_energy_image))
+                    player.score += 1000
 
     # Deze loop is uit de player.bullets loop gehaald en hernoemd naar m_bullet
     for m_bullet in metall_bullets:
@@ -554,6 +581,7 @@ def move():
                       and bullet.x + bullet.width > 0 and bullet.x < GAME_WIDTH]
     metalls = [metall for metall in metalls if metall.health > 0]
     bladers = [blader for blader in bladers if blader.health > 0]
+    crates = [crate for crate in crates if crate.health > 0]
 
     #enemy y movement
     for metall in metalls:
@@ -606,15 +634,17 @@ def move():
         game_over = True
 
     for item in items:
-        item.velocity_y += GRAVITY
-        item.y += item.velocity_y
-        check_tile_collision_y(item)
+        
+        current_time = pygame.time.get_ticks()
+        hover_offset = (math.sin((current_time - item.spawn_time) * 0.003) - 1) * 5
+        item.y = item.base_y + hover_offset
+        
         if player.colliderect(item):
             item.used = True
             if item.image == life_energy_image:
-                player.health = min(player.health + 10, player.max_health)
+                player.health = min(player.health + 4, player.max_health)
             elif item.image == big_life_energy_image:
-                player.health = min(player.health + 10, player.max_health)
+                player.health = min(player.health + 6, player.max_health)
     items = [item for item in items if not item.used]
     
     
@@ -633,6 +663,9 @@ def draw():
 
     for spike in spikes:
         window.blit(spike.image, spike)
+        
+    for crate in crates:
+        window.blit(crate.image, crate)
 
     player.update_image()
     window.blit(player.image, player)
@@ -711,6 +744,7 @@ background_tiles = []
 items = []
 spikes = [] #traps, hazards
 bladers = []
+crates = []
 create_map()
 
 while True: #game loop
