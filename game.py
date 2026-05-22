@@ -169,7 +169,7 @@ ob_images = [
 ]
 
 pygame.init() #START GAME
-window = pygame.display.set_mode((GAME_WIDTH, GAME_HEIGHT))
+window = pygame.display.set_mode((GAME_WIDTH, GAME_HEIGHT), pygame.FULLSCREEN | pygame.SCALED)
 pygame.display.set_caption("dino shooting game")
 pygame.display.set_icon(player_image_right)
 clock = pygame.time.Clock()
