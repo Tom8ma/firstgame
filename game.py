@@ -74,6 +74,12 @@ def load_image(image_name, scale=None):
     return image
 
 background_image = load_image("BG.png")
+
+# Twee versies van de playknop voor het hover-effect
+play_button_image_normal = load_image("Play.png", (200, 80))
+play_button_image_hover = load_image("Play.png", (220, 88)) # Iets groter
+play_button_rect = play_button_image_normal.get_rect(center=(GAME_WIDTH/2, GAME_HEIGHT/2))
+
 player_image_right = load_image("DinoR.png", (PLAYER_WIDTH, PLAYER_HEIGHT))
 player_image_left = load_image("DinoL.png", (PLAYER_WIDTH, PLAYER_HEIGHT))
 player_image_jump_right = load_image("JumpR.png", (PLAYER_JUMP_WIDTH, PLAYER_JUMP_HEIGHT))
@@ -486,8 +492,6 @@ def drop_item(character):
         items.append(Item(character.x, item_y, life_energy_image))
 
 
-
-
 def move_player_x(velocity_x):
     move_map_x(velocity_x)
     tile = check_tile_collision(player)
@@ -648,9 +652,6 @@ def move():
     items = [item for item in items if not item.used]
     
     
-    
-    
-
 def draw():
     window.fill((187 , 221 , 254))
     window.blit(background_image, (0, 40))
@@ -723,14 +724,19 @@ def draw_start_screen():
     window.fill((187 , 221 , 254))
     window.blit(background_image, (0, 40))
     
-    
     title_surface = game_over_font.render("DINO SHOOTING GAME", False, "black")
     window.blit(title_surface, (GAME_WIDTH/2 - title_surface.get_width()/2, GAME_HEIGHT/3))
     
+    # Controleer muispositie voor het hover-effect
+    mouse_pos = pygame.mouse.get_pos()
     
-    start_surface = game_over_font.render("Press ENTER to start", False, "black")
-    window.blit(start_surface, (GAME_WIDTH/2 - start_surface.get_width()/2, GAME_HEIGHT/2))
-    
+    if play_button_rect.collidepoint(mouse_pos):
+        # Muis is over de knop: teken de grotere knop (gecentreerd op dezelfde plek)
+        hover_rect = play_button_image_hover.get_rect(center=play_button_rect.center)
+        window.blit(play_button_image_hover, hover_rect.topleft)
+    else:
+        # Muis is niet over de knop: teken de normale knop
+        window.blit(play_button_image_normal, play_button_rect.topleft)
     
     window.blit(player_image_right, (GAME_WIDTH/2 - PLAYER_WIDTH/2, GAME_HEIGHT/1.5))
 
@@ -766,8 +772,10 @@ while True: #game loop
         pygame.display.update()
         clock.tick(60)
         
-        # Als de speler op ENTER drukt, start het spel
-        if keys[pygame.K_RETURN] or keys[pygame.K_KP_ENTER]:
+        # Controleer of de speler met de muis op de playknop klikt
+        mouse_pressed = pygame.mouse.get_pressed()
+        mouse_pos = pygame.mouse.get_pos()
+        if mouse_pressed[0] and play_button_rect.collidepoint(mouse_pos):
             show_start_screen = False
         
         # Sla de rest van de loop over zolang we in het startscherm zitten
