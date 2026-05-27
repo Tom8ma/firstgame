@@ -80,6 +80,16 @@ play_button_image_normal = load_image("Play.png", (200, 80))
 play_button_image_hover = load_image("Play.png", (220, 88)) # Iets groter
 play_button_rect = play_button_image_normal.get_rect(center=(GAME_WIDTH/2, GAME_HEIGHT/2))
 
+# Twee versies van de instellingen knop (gear)
+gear_button_image_normal = load_image("gear.png", (64, 64))
+gear_button_image_hover = load_image("gear.png", (72, 72))
+gear_button_rect = gear_button_image_normal.get_rect(topright=(GAME_WIDTH - 20, 20))
+
+# Twee versies van de return knop (kruisje/terug)
+return_button_image_normal = load_image("return.png", (64, 64))
+return_button_image_hover = load_image("return.png", (72, 72))
+return_button_rect = return_button_image_normal.get_rect(topleft=(20, 20))
+
 player_image_right = load_image("DinoR.png", (PLAYER_WIDTH, PLAYER_HEIGHT))
 player_image_left = load_image("DinoL.png", (PLAYER_WIDTH, PLAYER_HEIGHT))
 player_image_jump_right = load_image("JumpR.png", (PLAYER_JUMP_WIDTH, PLAYER_JUMP_HEIGHT))
@@ -183,10 +193,9 @@ pygame.font.init()
 game_font = pygame.font.Font("./PYGAME_TEXT1.ttf", 24)
 game_over_font = pygame.font.Font("./OpenSans-VariableFont_wdth,wght.ttf", 35)
 game_over = False
-game_won = False # NIEUW: Variabele voor de win-conditie
+game_won = False 
 show_start_screen = True 
-
-
+show_settings_screen = False 
 
 #Custom event
 INVINCIBLE_END = pygame.USEREVENT + 0
@@ -537,7 +546,8 @@ def move():
 
     for spike in spikes:
         if player.colliderect(spike):
-            player.health = 0 #game over
+            if not game_won: 
+                player.health = 0 #game over
 
     #bullets
     for bullet in player.bullets:
@@ -636,8 +646,10 @@ def move():
             player.health -= 1
             player.set_invincible()
 
+    
     if player.health <= 0 or player.y > GAME_HEIGHT:
-        game_over = True
+        if not game_won:
+            game_over = True
 
     for item in items:
         
@@ -653,10 +665,11 @@ def move():
                 player.health = min(player.health + 6, player.max_health)
     items = [item for item in items if not item.used]
     
-    # NIEUW: Controleer of speler het finishblok raakt
+    # NIEUW: Als speler finishblok raakt: winnen
     for b_tile in background_tiles:
         if b_tile.image == room_tile_image and player.colliderect(b_tile):
-            game_won = True
+            if not game_won:
+                game_won = True
     
     
 def draw():
@@ -719,19 +732,48 @@ def draw():
     text_surface = game_font.render(text_score, False, "black")
     window.blit(text_surface, (GAME_WIDTH/2, TILE_SIZE/2))
     
-    # NIEUW: Check of de game gewonnen is of game over
+    
+    # NIEUW: Perfect Einde Rendering met Overlay en Score (Zonder Confetti)
+    if game_over or game_won:
+        # Maak een overlay scherm (volledig zwart, semi-transparant)
+        overlay = pygame.Surface((GAME_WIDTH, GAME_HEIGHT), pygame.SRCALPHA)
+        overlay.fill((0, 0, 0, 160)) # 160 is de mate van doorzichtigheid (0-255)
+        window.blit(overlay, (0, 0))
+
     if game_over:
-        text_surface = game_over_font.render("GAME OVER", False, "black")
-        window.blit(text_surface, (GAME_WIDTH/8, GAME_HEIGHT/2))
-        text_surface = game_over_font.render("PRESS R TO RESTART", False, "black")
-        window.blit(text_surface, (GAME_WIDTH/8, GAME_HEIGHT/2 + TILE_SIZE))
+        text_surface = game_over_font.render("GAME OVER", False, "white")
+        window.blit(text_surface, (GAME_WIDTH/2 - text_surface.get_width()/2, GAME_HEIGHT/2 - TILE_SIZE))
+        
+        text_surface = game_over_font.render("PRESS R TO RESTART", False, "white")
+        window.blit(text_surface, (GAME_WIDTH/2 - text_surface.get_width()/2, GAME_HEIGHT/2 + TILE_SIZE))
+        
     elif game_won:
-        text_surface = game_over_font.render("YOU WIN!", False, "black")
-        window.blit(text_surface, (GAME_WIDTH/8, GAME_HEIGHT/2))
-        text_surface = game_over_font.render("PRESS R TO RESTART", False, "black")
-        window.blit(text_surface, (GAME_WIDTH/8, GAME_HEIGHT/2 + TILE_SIZE))
+        text_surface = game_over_font.render("YOU WIN!", False, "white")
+        window.blit(text_surface, (GAME_WIDTH/2 - text_surface.get_width()/2, GAME_HEIGHT/2 - TILE_SIZE * 2))
+        
+        # Laat de score zien in het geel om hem te laten opvallen
+        score_surface = game_font.render(f"FINAL SCORE: {player.score}", False, "yellow")
+        window.blit(score_surface, (GAME_WIDTH/2 - score_surface.get_width()/2, GAME_HEIGHT/2))
+
+        text_surface = game_over_font.render("PRESS R TO RESTART", False, "white")
+        window.blit(text_surface, (GAME_WIDTH/2 - text_surface.get_width()/2, GAME_HEIGHT/2 + TILE_SIZE * 2))
 
 
+def draw_settings_screen():
+    window.fill((187 , 221 , 254))
+    window.blit(background_image, (0, 40))
+    
+    title_surface = game_over_font.render("SETTINGS", False, "black")
+    window.blit(title_surface, (GAME_WIDTH/2 - title_surface.get_width()/2, GAME_HEIGHT/4))
+    
+    mouse_pos = pygame.mouse.get_pos()
+    
+    
+    if return_button_rect.collidepoint(mouse_pos):
+        hover_rect = return_button_image_hover.get_rect(center=return_button_rect.center)
+        window.blit(return_button_image_hover, hover_rect.topleft)
+    else:
+        window.blit(return_button_image_normal, return_button_rect.topleft)
 
 def draw_start_screen():
     window.fill((187 , 221 , 254))
@@ -740,16 +782,21 @@ def draw_start_screen():
     title_surface = game_over_font.render("DINO SHOOTING GAME", False, "black")
     window.blit(title_surface, (GAME_WIDTH/2 - title_surface.get_width()/2, GAME_HEIGHT/3))
     
-    # Controleer muispositie voor het hover-effect
     mouse_pos = pygame.mouse.get_pos()
     
+    
     if play_button_rect.collidepoint(mouse_pos):
-        # Muis is over de knop: teken de grotere knop (gecentreerd op dezelfde plek)
         hover_rect = play_button_image_hover.get_rect(center=play_button_rect.center)
         window.blit(play_button_image_hover, hover_rect.topleft)
     else:
-        # Muis is niet over de knop: teken de normale knop
         window.blit(play_button_image_normal, play_button_rect.topleft)
+        
+    
+    if gear_button_rect.collidepoint(mouse_pos):
+        hover_rect = gear_button_image_hover.get_rect(center=gear_button_rect.center)
+        window.blit(gear_button_image_hover, hover_rect.topleft)
+    else:
+        window.blit(gear_button_image_normal, gear_button_rect.topleft)
     
     window.blit(player_image_right, (GAME_WIDTH/2 - PLAYER_WIDTH/2, GAME_HEIGHT/1.5))
 
@@ -772,12 +819,12 @@ while True: #game loop
             pygame.quit()
             exit()
             
-        # Anti-spam restart en ESC logic: registreert alleen wanneer de toets omlaag wordt gedrukt (één keer per klik)
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_r:
                 reset_game()
             if event.key == pygame.K_ESCAPE:
                 show_start_screen = True
+                show_settings_screen = False 
                 reset_game()
 
         if event.type == INVINCIBLE_END:
@@ -787,45 +834,73 @@ while True: #game loop
 
     keys = pygame.key.get_pressed()
     
-    # NIEUW: Start scherm logica
+    
     if show_start_screen:
         draw_start_screen()
         pygame.display.update()
         clock.tick(60)
         
-        # Controleer of de speler met de muis op de playknop klikt
         mouse_pressed = pygame.mouse.get_pressed()
         mouse_pos = pygame.mouse.get_pos()
+        
         if mouse_pressed[0] and play_button_rect.collidepoint(mouse_pos):
             show_start_screen = False
+            
         
-        # Sla de rest van de loop over zolang we in het startscherm zitten
+        if mouse_pressed[0] and gear_button_rect.collidepoint(mouse_pos):
+            show_start_screen = False
+            show_settings_screen = True
+            pygame.time.delay(150) 
+        
+        
+        continue
+
+    
+    if show_settings_screen:
+        draw_settings_screen()
+        pygame.display.update()
+        clock.tick(60)
+        
+        mouse_pressed = pygame.mouse.get_pressed()
+        mouse_pos = pygame.mouse.get_pos()
+        
+        
+        if mouse_pressed[0] and return_button_rect.collidepoint(mouse_pos):
+            show_settings_screen = False
+            show_start_screen = True
+            pygame.time.delay(150) 
+            
         continue
         
         
-    if (keys[pygame.K_UP] or keys[pygame.K_z]) and not player.jumping:
-        player.velocity_y = PLAYER_VELOCITY_Y
-        player.jumping = True
+    
+    if not game_over and not game_won:
+        if (keys[pygame.K_UP] or keys[pygame.K_z]) and not player.jumping:
+            player.velocity_y = PLAYER_VELOCITY_Y
+            player.jumping = True
 
-    if keys[pygame.K_LEFT] or keys[pygame.K_q] or  keys[pygame.K_RIGHT] or keys[pygame.K_d]:
-        player.walking = True
+        if keys[pygame.K_LEFT] or keys[pygame.K_q] or  keys[pygame.K_RIGHT] or keys[pygame.K_d]:
+            player.walking = True
+        else:
+            player.walking = False
+
+        if keys[pygame.K_LEFT] or keys[pygame.K_q]:
+            # player.velocity_x = -PLAYER_VELOCITY_X
+            move_player_x(PLAYER_VELOCITY_X)
+            player.direction = "left"
+
+        if keys[pygame.K_RIGHT] or keys[pygame.K_d]:
+            # player.velocity_x = PLAYER_VELOCITY_X
+            move_player_x(-PLAYER_VELOCITY_X)
+            player.direction = "right"
+
+        if keys[pygame.K_SPACE] or keys[pygame.K_f]:
+            player.set_shooting()
     else:
+        
         player.walking = False
 
-    if keys[pygame.K_LEFT] or keys[pygame.K_q]:
-        # player.velocity_x = -PLAYER_VELOCITY_X
-        move_player_x(PLAYER_VELOCITY_X)
-        player.direction = "left"
-
-    if keys[pygame.K_RIGHT] or keys[pygame.K_d]:
-        # player.velocity_x = PLAYER_VELOCITY_X
-        move_player_x(-PLAYER_VELOCITY_X)
-        player.direction = "right"
-
-    if keys[pygame.K_SPACE] or keys[pygame.K_f]:
-        player.set_shooting()
-
-    # NIEUW: beweeg alleen als we niet dood zijn en niet gewonnen hebben
+    
     if not game_over and not game_won:
         move()
         
