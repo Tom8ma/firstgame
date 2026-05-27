@@ -183,6 +183,7 @@ pygame.font.init()
 game_font = pygame.font.Font("./PYGAME_TEXT1.ttf", 24)
 game_over_font = pygame.font.Font("./OpenSans-VariableFont_wdth,wght.ttf", 35)
 game_over = False
+game_won = False # NIEUW: Variabele voor de win-conditie
 show_start_screen = True 
 
 
@@ -444,7 +445,7 @@ def create_map():
 
 def reset_game():
     global player , metalls , metall_bullets , tiles, background_tiles , \
-        items, spikes , bladers, game_over , crates
+        items, spikes , bladers, game_over , crates, game_won
     player = Player()
     metalls = []
     metall_bullets =[] #bullets for metall
@@ -456,6 +457,7 @@ def reset_game():
     crates = []
     create_map()
     game_over = False
+    game_won = False
 
 def check_tile_collision(character):
     for tile in tiles:
@@ -527,7 +529,7 @@ def move_map_x(velocity_x):
         crate.x += velocity_x
 
 def move():
-    global metalls, items, bladers , metall_bullets , game_over , crates
+    global metalls, items, bladers , metall_bullets , game_over , crates, game_won
     #y movement
     player.velocity_y += GRAVITY
     player.y += player.velocity_y
@@ -651,6 +653,11 @@ def move():
                 player.health = min(player.health + 6, player.max_health)
     items = [item for item in items if not item.used]
     
+    # NIEUW: Controleer of speler het finishblok raakt
+    for b_tile in background_tiles:
+        if b_tile.image == room_tile_image and player.colliderect(b_tile):
+            game_won = True
+    
     
 def draw():
     window.fill((187 , 221 , 254))
@@ -712,10 +719,16 @@ def draw():
     text_surface = game_font.render(text_score, False, "black")
     window.blit(text_surface, (GAME_WIDTH/2, TILE_SIZE/2))
     
+    # NIEUW: Check of de game gewonnen is of game over
     if game_over:
         text_surface = game_over_font.render("GAME OVER", False, "black")
         window.blit(text_surface, (GAME_WIDTH/8, GAME_HEIGHT/2))
-        text_surface = game_over_font.render("PRESS ENTER", False, "black")
+        text_surface = game_over_font.render("PRESS R TO RESTART", False, "black")
+        window.blit(text_surface, (GAME_WIDTH/8, GAME_HEIGHT/2 + TILE_SIZE))
+    elif game_won:
+        text_surface = game_over_font.render("YOU WIN!", False, "black")
+        window.blit(text_surface, (GAME_WIDTH/8, GAME_HEIGHT/2))
+        text_surface = game_over_font.render("PRESS R TO RESTART", False, "black")
         window.blit(text_surface, (GAME_WIDTH/8, GAME_HEIGHT/2 + TILE_SIZE))
 
 
@@ -758,6 +771,14 @@ while True: #game loop
         if event.type == pygame.QUIT:
             pygame.quit()
             exit()
+            
+        # Anti-spam restart en ESC logic: registreert alleen wanneer de toets omlaag wordt gedrukt (één keer per klik)
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_r:
+                reset_game()
+            if event.key == pygame.K_ESCAPE:
+                show_start_screen = True
+                reset_game()
 
         if event.type == INVINCIBLE_END:
             player.invincible = False
@@ -780,9 +801,6 @@ while True: #game loop
         
         # Sla de rest van de loop over zolang we in het startscherm zitten
         continue
-    
-    if (keys[pygame.K_RETURN]) or keys[pygame.KSCAN_KP_ENTER] and game_over:
-        reset_game()
         
         
     if (keys[pygame.K_UP] or keys[pygame.K_z]) and not player.jumping:
@@ -807,8 +825,10 @@ while True: #game loop
     if keys[pygame.K_SPACE] or keys[pygame.K_f]:
         player.set_shooting()
 
-    if not game_over  :
+    # NIEUW: beweeg alleen als we niet dood zijn en niet gewonnen hebben
+    if not game_over and not game_won:
         move()
-        draw()
-        pygame.display.update()
-        clock.tick(60) #60 frames per second (fps)
+        
+    draw()
+    pygame.display.update()
+    clock.tick(60) #60 frames per second (fps)
