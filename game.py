@@ -80,6 +80,16 @@ play_button_image_normal = load_image("Play.png", (200, 80))
 play_button_image_hover = load_image("Play.png", (220, 88)) # Iets groter
 play_button_rect = play_button_image_normal.get_rect(center=(GAME_WIDTH/2, GAME_HEIGHT/2))
 
+# Twee versies van de quit knop (startscherm)
+quit_button_image_normal = load_image("quit.png", (200, 80))
+quit_button_image_hover = load_image("quit.png", (220, 88))
+quit_button_rect = quit_button_image_normal.get_rect(center=(GAME_WIDTH/2, GAME_HEIGHT/2 + 100))
+
+# Twee versies van de home knop (pauzemenu)
+home_button_image_normal = load_image("pause.png", (200, 80))
+home_button_image_hover = load_image("pause.png", (220, 88))
+home_button_rect = home_button_image_normal.get_rect(center=(GAME_WIDTH/2, GAME_HEIGHT/2 + 80))
+
 # Twee versies van de instellingen knop (gear)
 gear_button_image_normal = load_image("gear.png", (64, 64))
 gear_button_image_hover = load_image("gear.png", (72, 72))
@@ -89,6 +99,14 @@ gear_button_rect = gear_button_image_normal.get_rect(topright=(GAME_WIDTH - 20, 
 return_button_image_normal = load_image("return.png", (64, 64))
 return_button_image_hover = load_image("return.png", (72, 72))
 return_button_rect = return_button_image_normal.get_rect(topleft=(20, 20))
+
+# Twee versies van de check en cross knoppen (voor de fullscreen toggle)
+check_button_image_normal = load_image("check.png", (64, 64))
+check_button_image_hover = load_image("check.png", (72, 72))
+cross_button_image_normal = load_image("cross.png", (64, 64))
+cross_button_image_hover = load_image("cross.png", (72, 72))
+toggle_button_rect = check_button_image_normal.get_rect(center=(GAME_WIDTH/2 + 100, GAME_HEIGHT/2))
+
 
 player_image_right = load_image("DinoR.png", (PLAYER_WIDTH, PLAYER_HEIGHT))
 player_image_left = load_image("DinoL.png", (PLAYER_WIDTH, PLAYER_HEIGHT))
@@ -196,6 +214,8 @@ game_over = False
 game_won = False 
 show_start_screen = True 
 show_settings_screen = False 
+is_paused = False 
+is_fullscreen = True 
 
 #Custom event
 INVINCIBLE_END = pygame.USEREVENT + 0
@@ -454,7 +474,7 @@ def create_map():
 
 def reset_game():
     global player , metalls , metall_bullets , tiles, background_tiles , \
-        items, spikes , bladers, game_over , crates, game_won
+        items, spikes , bladers, game_over , crates, game_won, is_paused
     player = Player()
     metalls = []
     metall_bullets =[] #bullets for metall
@@ -467,6 +487,7 @@ def reset_game():
     create_map()
     game_over = False
     game_won = False
+    is_paused = False
 
 def check_tile_collision(character):
     for tile in tiles:
@@ -665,7 +686,7 @@ def move():
                 player.health = min(player.health + 6, player.max_health)
     items = [item for item in items if not item.used]
     
-    # NIEUW: Als speler finishblok raakt: winnen
+    # Als speler finishblok raakt: winnen
     for b_tile in background_tiles:
         if b_tile.image == room_tile_image and player.colliderect(b_tile):
             if not game_won:
@@ -733,7 +754,7 @@ def draw():
     window.blit(text_surface, (GAME_WIDTH/2, TILE_SIZE/2))
     
     
-    # NIEUW: Perfect Einde Rendering met Overlay en Score (Zonder Confetti)
+    # Perfect Einde Rendering met Overlay en Score
     if game_over or game_won:
         # Maak een overlay scherm (volledig zwart, semi-transparant)
         overlay = pygame.Surface((GAME_WIDTH, GAME_HEIGHT), pygame.SRCALPHA)
@@ -758,6 +779,28 @@ def draw():
         text_surface = game_over_font.render("PRESS R TO RESTART", False, "white")
         window.blit(text_surface, (GAME_WIDTH/2 - text_surface.get_width()/2, GAME_HEIGHT/2 + TILE_SIZE * 2))
 
+# Update voor de home knop functionaliteit in het pauzescherm
+def draw_pause_screen():
+    # Donkere overlay voor over het spel
+    overlay = pygame.Surface((GAME_WIDTH, GAME_HEIGHT), pygame.SRCALPHA)
+    overlay.fill((0, 0, 0, 160)) 
+    window.blit(overlay, (0, 0))
+    
+    title_surface = game_over_font.render("PAUSED", False, "white")
+    window.blit(title_surface, (GAME_WIDTH/2 - title_surface.get_width()/2, GAME_HEIGHT/4))
+    
+    resume_surface = game_font.render("Press ESC to Resume", False, "white")
+    window.blit(resume_surface, (GAME_WIDTH/2 - resume_surface.get_width()/2, GAME_HEIGHT/2 - 20))
+    
+    mouse_pos = pygame.mouse.get_pos()
+    
+    # Home knop hover effect in het pauzemenu
+    if home_button_rect.collidepoint(mouse_pos):
+        hover_rect = home_button_image_hover.get_rect(center=home_button_rect.center)
+        window.blit(home_button_image_hover, hover_rect.topleft)
+    else:
+        window.blit(home_button_image_normal, home_button_rect.topleft)
+
 
 def draw_settings_screen():
     window.fill((187 , 221 , 254))
@@ -766,7 +809,21 @@ def draw_settings_screen():
     title_surface = game_over_font.render("SETTINGS", False, "black")
     window.blit(title_surface, (GAME_WIDTH/2 - title_surface.get_width()/2, GAME_HEIGHT/4))
     
+    # Tekst voor de Fullscreen optie
+    fullscreen_text = game_font.render("FULLSCREEN:", False, "black")
+    window.blit(fullscreen_text, (GAME_WIDTH/2 - 150, GAME_HEIGHT/2 - fullscreen_text.get_height()/2))
+    
     mouse_pos = pygame.mouse.get_pos()
+    
+    # Welke check/cross knop we laten zien ligt aan de is_fullscreen status
+    hovering_toggle = toggle_button_rect.collidepoint(mouse_pos)
+    if is_fullscreen:
+        img = check_button_image_hover if hovering_toggle else check_button_image_normal
+    else:
+        img = cross_button_image_hover if hovering_toggle else cross_button_image_normal
+        
+    rect = img.get_rect(center=toggle_button_rect.center)
+    window.blit(img, rect.topleft)
     
     
     if return_button_rect.collidepoint(mouse_pos):
@@ -775,6 +832,8 @@ def draw_settings_screen():
     else:
         window.blit(return_button_image_normal, return_button_rect.topleft)
 
+
+# Update startscherm om de quit knop toe te voegen
 def draw_start_screen():
     window.fill((187 , 221 , 254))
     window.blit(background_image, (0, 40))
@@ -784,14 +843,19 @@ def draw_start_screen():
     
     mouse_pos = pygame.mouse.get_pos()
     
-    
     if play_button_rect.collidepoint(mouse_pos):
         hover_rect = play_button_image_hover.get_rect(center=play_button_rect.center)
         window.blit(play_button_image_hover, hover_rect.topleft)
     else:
         window.blit(play_button_image_normal, play_button_rect.topleft)
         
-    
+    # Hover effect voor de Quit knop
+    if quit_button_rect.collidepoint(mouse_pos):
+        hover_rect = quit_button_image_hover.get_rect(center=quit_button_rect.center)
+        window.blit(quit_button_image_hover, hover_rect.topleft)
+    else:
+        window.blit(quit_button_image_normal, quit_button_rect.topleft)
+        
     if gear_button_rect.collidepoint(mouse_pos):
         hover_rect = gear_button_image_hover.get_rect(center=gear_button_rect.center)
         window.blit(gear_button_image_hover, hover_rect.topleft)
@@ -822,9 +886,16 @@ while True: #game loop
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_r:
                 reset_game()
+                
             if event.key == pygame.K_ESCAPE:
+                if show_settings_screen:
+                    show_settings_screen = False
+                    show_start_screen = True
+                elif not show_start_screen and not game_over and not game_won:
+                    is_paused = not is_paused 
+                    
+            if event.key == pygame.K_m and is_paused:
                 show_start_screen = True
-                show_settings_screen = False 
                 reset_game()
 
         if event.type == INVINCIBLE_END:
@@ -846,12 +917,15 @@ while True: #game loop
         if mouse_pressed[0] and play_button_rect.collidepoint(mouse_pos):
             show_start_screen = False
             
-        
+        # Logica om het spel af te sluiten via de knop op het startscherm
+        if mouse_pressed[0] and quit_button_rect.collidepoint(mouse_pos):
+            pygame.quit()
+            exit()
+            
         if mouse_pressed[0] and gear_button_rect.collidepoint(mouse_pos):
             show_start_screen = False
             show_settings_screen = True
             pygame.time.delay(150) 
-        
         
         continue
 
@@ -870,11 +944,19 @@ while True: #game loop
             show_start_screen = True
             pygame.time.delay(150) 
             
+        if mouse_pressed[0] and toggle_button_rect.collidepoint(mouse_pos):
+            is_fullscreen = not is_fullscreen
+            if is_fullscreen:
+                window = pygame.display.set_mode((GAME_WIDTH, GAME_HEIGHT), pygame.FULLSCREEN | pygame.SCALED)
+            else:
+                window = pygame.display.set_mode((GAME_WIDTH, GAME_HEIGHT), pygame.SCALED)
+            pygame.time.delay(200) # Debounce zodat het niet gaat flikkeren
+            
         continue
         
         
     
-    if not game_over and not game_won:
+    if not game_over and not game_won and not is_paused:
         if (keys[pygame.K_UP] or keys[pygame.K_z]) and not player.jumping:
             player.velocity_y = PLAYER_VELOCITY_Y
             player.jumping = True
@@ -901,9 +983,21 @@ while True: #game loop
         player.walking = False
 
     
-    if not game_over and not game_won:
+    if not game_over and not game_won and not is_paused:
         move()
         
     draw()
+    
+    # Logica voor de home knop tijdens de pauze
+    if is_paused:
+        draw_pause_screen()
+        mouse_pressed = pygame.mouse.get_pressed()
+        mouse_pos = pygame.mouse.get_pos()
+        if mouse_pressed[0] and home_button_rect.collidepoint(mouse_pos):
+            show_start_screen = True
+            is_paused = False
+            reset_game()
+            pygame.time.delay(150)
+            
     pygame.display.update()
     clock.tick(60) #60 frames per second (fps)
