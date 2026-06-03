@@ -5,6 +5,17 @@ import random
 import math
 import tile_map
 
+import os
+import sys
+
+def resource_path(path):
+    try:
+        base_path = sys._MEIPASS
+    except Exception:
+        base_path = os.path.abspath(".")
+    return os.path.join(base_path, path)
+
+
 #game variables
 TILE_SIZE = 32
 ROW_COUNT = 16
@@ -66,8 +77,7 @@ BIG_LIFE_ENERGY_HEIGHT = 50
 
 #images
 def load_image(image_name, scale=None):
-    base_path = os.path.dirname(os.path.abspath(__file__))
-    image_path = os.path.join(base_path, "images", image_name)
+    image_path = resource_path(os.path.join("images", image_name))
     image = pygame.image.load(image_path)
     if scale is not None:
         image = pygame.transform.scale(image, scale)
@@ -78,16 +88,16 @@ background_image = load_image("BG.png")
 # Twee versies van de playknop voor het hover-effect
 play_button_image_normal = load_image("Play.png", (200, 80))
 play_button_image_hover = load_image("Play.png", (220, 88)) # Iets groter
-play_button_rect = play_button_image_normal.get_rect(center=(GAME_WIDTH/2, GAME_HEIGHT/2))
+play_button_rect = play_button_image_normal.get_rect(center=(GAME_WIDTH/2, GAME_HEIGHT/2 - 40))
 
 # Twee versies van de quit knop (startscherm)
 quit_button_image_normal = load_image("quit.png", (200, 80))
 quit_button_image_hover = load_image("quit.png", (220, 88))
-quit_button_rect = quit_button_image_normal.get_rect(center=(GAME_WIDTH/2, GAME_HEIGHT/2 + 100))
+quit_button_rect = quit_button_image_normal.get_rect(center=(GAME_WIDTH/2, GAME_HEIGHT/2 + 60))
 
 # Twee versies van de home knop (pauzemenu)
-home_button_image_normal = load_image("pause.png", (200, 80))
-home_button_image_hover = load_image("pause.png", (220, 88))
+home_button_image_normal = load_image("EXIT.png", (200, 80))
+home_button_image_hover = load_image("EXIT.png", (220, 88))
 home_button_rect = home_button_image_normal.get_rect(center=(GAME_WIDTH/2, GAME_HEIGHT/2 + 80))
 
 # Twee versies van de instellingen knop (gear)
@@ -208,8 +218,8 @@ pygame.display.set_caption("dino shooting game")
 pygame.display.set_icon(player_image_right)
 clock = pygame.time.Clock()
 pygame.font.init()
-game_font = pygame.font.Font("./PYGAME_TEXT1.ttf", 24)
-game_over_font = pygame.font.Font("./OpenSans-VariableFont_wdth,wght.ttf", 35)
+game_font = pygame.font.Font(resource_path("./PYGAME_TEXT1.ttf"), 24)
+game_over_font = pygame.font.Font(resource_path("./OpenSans-VariableFont_wdth,wght.ttf"), 35)
 game_over = False
 game_won = False 
 show_start_screen = True 
@@ -810,7 +820,7 @@ def draw_settings_screen():
     window.blit(title_surface, (GAME_WIDTH/2 - title_surface.get_width()/2, GAME_HEIGHT/4))
     
     # Tekst voor de Fullscreen optie
-    fullscreen_text = game_font.render("FULLSCREEN:", False, "black")
+    fullscreen_text = game_font.render("FULLSCREEN ", False, "black")
     window.blit(fullscreen_text, (GAME_WIDTH/2 - 150, GAME_HEIGHT/2 - fullscreen_text.get_height()/2))
     
     mouse_pos = pygame.mouse.get_pos()
@@ -833,13 +843,13 @@ def draw_settings_screen():
         window.blit(return_button_image_normal, return_button_rect.topleft)
 
 
-# Update startscherm om de quit knop toe te voegen
+# Startscherm dino verschoven zodat hij niet over de quit knop valt
 def draw_start_screen():
     window.fill((187 , 221 , 254))
     window.blit(background_image, (0, 40))
     
     title_surface = game_over_font.render("DINO SHOOTING GAME", False, "black")
-    window.blit(title_surface, (GAME_WIDTH/2 - title_surface.get_width()/2, GAME_HEIGHT/3))
+    window.blit(title_surface, (GAME_WIDTH/2 - title_surface.get_width()/2, GAME_HEIGHT/4)) # Iets hoger gezet
     
     mouse_pos = pygame.mouse.get_pos()
     
@@ -862,7 +872,7 @@ def draw_start_screen():
     else:
         window.blit(gear_button_image_normal, gear_button_rect.topleft)
     
-    window.blit(player_image_right, (GAME_WIDTH/2 - PLAYER_WIDTH/2, GAME_HEIGHT/1.5))
+    window.blit(player_image_right, (GAME_WIDTH/2 - PLAYER_WIDTH/2, GAME_HEIGHT/2 + 150))
 
 
 #start game
